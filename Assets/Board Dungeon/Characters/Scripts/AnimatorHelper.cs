@@ -21,23 +21,28 @@ public class AnimatorHelper : MonoBehaviour
 
 
 
-    public void UseBasicAttack()
+    public void UseBasicAttack(int index)
     {
-        abilityManager.UseBasicAttack();
+        abilityManager.MarkBasicAttack(index);
+    }
+    public void UseAttackAbility(int index)
+    {
+        abilityManager.MarkAttackAbility(index);
     }
     public void SetAttackColliderOn(int typeOfCollider)
     {
-        abilityManager.SetAttackColliderOn(typeOfCollider);
+        abilityManager.StartDetectHit();
     }
     public void SetAttackColliderOff(int typeOfCollider)
     {
-        abilityManager.SetAttackColliderOff(typeOfCollider);
+        abilityManager.StopDetectHit();
     }
     public void SetPushDistance(float pushDistance)
     {
        myStats.SetPushDistance(pushDistance);
     }
-        
+   
+
 
     // Update is called once per frame
     void Update()

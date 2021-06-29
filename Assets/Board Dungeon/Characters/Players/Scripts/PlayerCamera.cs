@@ -47,6 +47,8 @@ public class PlayerCamera : MonoBehaviour
 
             cameraAngle = 180f;
             cameraAngle += playerAngle;
+            //added angle to view combo
+            cameraAngle += 50f;
         }
         else
         {

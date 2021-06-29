@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acd8de9c0d9577b4490107728d127b1c, type: 3}
+  m_Name: BasicAttack 3
+  m_EditorClassIdentifier: 
+  attackDmgModifier: 0
+  strenghOfPush: 3
+  _attackColliderProperties:
+    colliderType: 0
+    parentOfColldier: 0
+    positionOfCollider: {x: 0, y: 0, z: 0}
+    rotationOfCollider: {x: -0.088836834, y: 0.06035266, z: -0.00539281, w: 0.9942015}
+    centerOfCollider: {x: -0.01, y: -0.02, z: 0.4729595}
+    sizeOfCollider: {x: 0.4, y: 0.4, z: 0.74744433}
+    radiusOfCollider: 0.5

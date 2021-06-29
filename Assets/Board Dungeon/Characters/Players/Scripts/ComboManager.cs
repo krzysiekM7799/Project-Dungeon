@@ -27,6 +27,16 @@ public class ComboManager : MonoBehaviour
     {
        CanReceiveInput = !CanReceiveInput;
     }
+    public void HandleAttack()
+    {
+        if (CanReceiveInput)
+        {
+            InputReceived = true;
+            CanReceiveInput = false;
+
+        }
+
+    }
     // Update is called once per frame
     void Update()
     {

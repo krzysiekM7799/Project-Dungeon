@@ -6,7 +6,6 @@ public class AttackComboBehaviour : StateMachineBehaviour
 {
     //Individual delay time to perform a combo 
     [SerializeField] private float maxComboDelay = 0.8f;
-    [SerializeField] private int attackIndex;
     private Transform player;
     private PlayerCharacter playerCharacter;
     private ComboManager comboManager;

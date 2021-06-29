@@ -13,6 +13,8 @@ public class IdleBehaviour : StateMachineBehaviour
         player = GameController.instance.Player;
         playerCharacter = player.GetComponent<PlayerCharacter>();
         comboManager = player.GetComponent<ComboManager>();
+        playerCharacter.AbilityManager.UsingAbility = false;
+        playerCharacter.RotationEnabled = true;
         animator.SetBool("Attack", false);
         comboManager.CanReceiveInput = true;
     }

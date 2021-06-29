@@ -66,13 +66,6 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.45238096
-        functionName: SetPushDistance
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 2
-        intParameter: 0
-        messageOptions: 0
       - time: 0.4739558
         functionName: SetAttackColliderOn
         data: 
@@ -80,11 +73,11 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.5854899
+      - time: 0.588502
         functionName: SetAttackColliderOff
         data: 
         objectReferenceParameter: {instanceID: 0}
-        floatParameter: 3
+        floatParameter: 0
         intParameter: 0
         messageOptions: 0
       transformMask: []

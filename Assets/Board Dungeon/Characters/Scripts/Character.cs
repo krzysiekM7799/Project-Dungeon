@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +9,7 @@ public class Character : MonoBehaviour
     protected Animator animator;
     //Character properties
     protected CapsuleCollider m_Capsule;
-    protected Rigidbody _rigidbody;
-    public Rigidbody Rigidbody { get => _rigidbody; set => _rigidbody = value; }
+    protected AbilityManager abilityManager;
 
 
     //Movement properties
@@ -18,19 +18,49 @@ public class Character : MonoBehaviour
 
    
     //Targeting properties
-    public float DistanceToCurrentTarget { get; set; }
     public Animator Animator { get => animator; set => animator = value; }
+    public AbilityManager AbilityManager { get => abilityManager; set => abilityManager = value; }
 
-    public Transform CurrentTarget;
+    
 
+
+    public float GetRealRadiusRadius()
+    {
+        return m_Capsule.radius * transform.localScale.x;
+    }
+ 
     protected void Awake()
     {
         animator = GetComponentInChildren<Animator>();
-        _rigidbody = GetComponent<Rigidbody>();
-        //MyAwake();
+        m_Capsule = GetComponent<CapsuleCollider>();
+        abilityManager = GetComponent<AbilityManager>();
+        MyAwake();
     }
-   // protected abstract void MyAwake();
-    
+
+    protected virtual void MyAwake()
+    {
+
+    }
+   
+
+    public void SetAnimatorParametr(AnimatorParametrType animatorParametrType, string parametrName, float parametrValue = 0)
+    {
+        switch (animatorParametrType)
+        {
+            case AnimatorParametrType.Trigger:
+                animator.SetTrigger(parametrName);
+                break;
+            case AnimatorParametrType.Float:
+                animator.SetFloat(parametrName, parametrValue);
+                break;
+            case AnimatorParametrType.Int:
+                animator.SetInteger(parametrName, (int)parametrValue);
+                break;
+        }
+    }
+
+    // protected abstract void MyAwake();
+
 
     // Start is called before the first frame update
     void Start()
@@ -44,5 +74,4 @@ public class Character : MonoBehaviour
     {
         
     }
-   
 }

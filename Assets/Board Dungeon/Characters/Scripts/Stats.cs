@@ -32,9 +32,10 @@ public class Stats : MonoBehaviour
 
     private bool died;
     private Character character;
-    public float[] AbilityEffectsTimes;
-
-
+    private float[] AbilityEffectsTimes;
+    private bool characterCanBePushed = true;
+    
+    float realRadius;
 
     protected void Awake()
     {
@@ -46,7 +47,7 @@ public class Stats : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        realRadius = character.GetRealRadiusRadius();
     }
 
     // Update is called once per frame
@@ -63,15 +64,28 @@ public class Stats : MonoBehaviour
         Hp -= takenDmg;
        // CheckIfDied();
     }
-    public void PushCharacter(Vector3 attackerPosition, float strengh = 1)
+    public bool PushCharacter(Vector3 attackerPosition, float strengh = 1, bool relativeToAttackerPosition = false)
     {
-        Debug.Log("dotykam");
-        Vector3 pushVector = (transform.position - attackerPosition);
-        pushVector.y = 0;
-        pushVector = pushVector.normalized;
-        pushVector *= 30;
-         //transform.position += pushVector;
-        character.Rigidbody.AddForce(pushVector * 10f);
+        if (characterCanBePushed)
+        {
+            Vector3 pushVector = (transform.position - attackerPosition);
+            pushVector.y = 0;
+            pushVector = pushVector.normalized;
+            //push distance depends on the player's position
+            if (relativeToAttackerPosition)
+            {
+                var nearestColliderPointToAttacker = transform.position - pushVector * realRadius;
+                strengh -= Vector3.Distance(nearestColliderPointToAttacker, attackerPosition);
+            }
+            Debug.Log(strengh);
+            pushVector *= strengh;
+            transform.position += pushVector;
+            return true;
+        }
+      
+        return false;
+        
+       
             
     }
     public void SetPushDistance(float pushDistance)
@@ -110,13 +124,6 @@ public class Stats : MonoBehaviour
         }
     }
 
-    public enum AbilityEffect
-    {
-        STUN,
-        SLOW,
-        POISON,
-        BLIND,
-    }
     void CheckAbilityEffects()
     {
         for (int i = 0; i < AbilityEffectsTimes.Length; i++)
@@ -133,22 +140,22 @@ public class Stats : MonoBehaviour
     {
         switch (abilityEffect)
         {
-            case AbilityEffect.STUN:
+            case AbilityEffect.Stun:
                 {
                     Debug.Log("Odtwarzam Stuna");
                 }
                 break;
-            case AbilityEffect.SLOW:
+            case AbilityEffect.Slow:
                 {
                     Debug.Log("Odtwarzam Slowa");
                 }
                 break;
-            case AbilityEffect.POISON:
+            case AbilityEffect.Poison:
                 {
                     Debug.Log("Odtwarzam Posisona");
                 }
                 break;
-            case AbilityEffect.BLIND:
+            case AbilityEffect.Blind:
                 {
                     Debug.Log("Odtwarzam Blinda");
                     break;

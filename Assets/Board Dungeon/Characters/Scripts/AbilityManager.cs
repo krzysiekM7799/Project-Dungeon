@@ -5,93 +5,230 @@ using UnityEngine;
 
 public class AbilityManager : MonoBehaviour
 {
-    public BoxCollider attackBoxCollider;
-    public SphereCollider attackSphereColldier;
-    AbilityType currentAbilityType = AbilityType.BasicAttack;
-    [SerializeField] BasicAttackColliderProperties basicAttackColliderProperties;
-    private BasicAttackColliderProperties BasicAttackColliderProperties1 { get => basicAttackColliderProperties; set => basicAttackColliderProperties = value; }
+    // Structure, which hold transform of object with colliders, colliders, and information which collider is current using
+    [SerializeField] AttackColliders attackColliders;
+    //Transform of the character's weapon parent
+    Transform attackColliderWeaponParentTransform;
+    //List of Basic Attack scriptable objects
+    [SerializeField] private BasicAttack[] basicAttacks;
+    [SerializeField] private AttackAbility[] attackAbilities;
+    private int attackAbilitiesCount;
+    public int AttackAbilitiesCount { get => attackAbilitiesCount;}
+    [SerializeField] private AttackAbility[] buffAbilities;
+    private int buffAbilitiesCount;
+    public int BuffAbilitiesCount { get => buffAbilitiesCount; }
+    private CurrentAbilityInformation currentAbilityInformation;
+    private Stats myStats;
+    private Character character;
+    [SerializeField] private Transform currentTarget;
+    static string useAbilityTrigger = "UseAbility";
+    
 
-    [System.Serializable]
-    struct BasicAttackColliderProperties
-    {
-        public Vector3 positionOfCollider;
-        public Vector3 centerOfCollider;
-        public Vector3 sizeOfCollider;
-        public Quaternion rotationOfCollider;
-    }
+    public bool UsingAbility { get; set; }
 
-    //Methods for enable or disable attack collider for animation events
-    public void SetAttackColliderOn(int typeOfCollider)
-    {
-        switch (typeOfCollider)
+    public BasicAttackProperties currentBasicAttacksProperties {
+        get
         {
-            case 0:
-                attackBoxCollider.enabled = true;
-                break;
-            case 1:
-              attackSphereColldier.enabled = true;
-                break;
-          
+            BasicAttackProperties basicAttackProperties;
+            basicAttackProperties.attackDmgModifier = basicAttacks[currentAbilityInformation.currentAbilityIndex].attackDmgModifier;
+            basicAttackProperties.strenghOfPush = basicAttacks[currentAbilityInformation.currentAbilityIndex].strenghOfPush;
+            return basicAttackProperties;
         }
     }
-    public void SetAttackColliderOff(int typeOfCollider)
+    public AttackAbilityProperties currentAttackAbilityProperties
     {
-        switch (typeOfCollider)
+        get
         {
-            case 0:
-                attackBoxCollider.enabled = false;
-                break;
-            case 1:
-                attackSphereColldier.enabled = false;
-                break;
+            AttackAbilityProperties attackAbilityProperties;
+            attackAbilityProperties.attackDmg = attackAbilities[currentAbilityInformation.currentAbilityIndex].attackDmg;
+            attackAbilityProperties.abilityPower = attackAbilities[currentAbilityInformation.currentAbilityIndex].abilityPower;
+            attackAbilityProperties.strenghOfPush = attackAbilities[currentAbilityInformation.currentAbilityIndex].strenghOfPush;
+            attackAbilityProperties.abilityEffect = attackAbilities[currentAbilityInformation.currentAbilityIndex].abilityEffect;
+            attackAbilityProperties.abilityEffectValue = attackAbilities[currentAbilityInformation.currentAbilityIndex].abilityEffectValue;
+            attackAbilityProperties.abilityEffectTime = attackAbilities[currentAbilityInformation.currentAbilityIndex].abilityEffectTime;
+            return attackAbilityProperties;
 
         }
     }
-    public void UseBasicAttack()
-    {
-        currentAbilityType = AbilityType.BasicAttack;
-        attackBoxCollider.transform.localPosition = basicAttackColliderProperties.positionOfCollider;
-        attackBoxCollider.transform.localRotation = basicAttackColliderProperties.rotationOfCollider;
-        attackBoxCollider.size = basicAttackColliderProperties.sizeOfCollider;
-        attackBoxCollider.center = basicAttackColliderProperties.centerOfCollider;
-        
-         
-    }
-    public void UseAttackAbility()
-    {
-        currentAbilityType = AbilityType.AttackAbility;
-        
-        
-    }
+
+    public AbilityType CurrentAbilityType { get => currentAbilityInformation.currentAbilityType; set => currentAbilityInformation.currentAbilityType = value; }
+    public CurrentAbilityInformation CurrentAbilityInformation { get => currentAbilityInformation; }
     private void Awake()
     {
-        SetPropertiesOfColliderBasicAttack();
+        attackAbilitiesCount = attackAbilities.Length;
+        buffAbilitiesCount = buffAbilities.Length;
+        character = GetComponent<Character>();
     }
-    // Basic attack collider properties are downloaded from the scene before start, you have to set it on scene for each character
-    private void SetPropertiesOfColliderBasicAttack()
+    private void Start()
     {
-        basicAttackColliderProperties.positionOfCollider = attackBoxCollider.transform.localPosition;
-        basicAttackColliderProperties.rotationOfCollider = attackBoxCollider.transform.localRotation;
-        basicAttackColliderProperties.sizeOfCollider = attackBoxCollider.size;
-        basicAttackColliderProperties.centerOfCollider = attackBoxCollider.center;
+        attackColliderWeaponParentTransform = attackColliders.attackColliderTransform.parent;
+        myStats = GetComponent<Stats>();
+    }
+    //Methods for enable or disable attack collider for animation events (non target attack abilities)
+    public void StartDetectHit()
+    {
+        switch (currentAbilityInformation.currentColliderType)
+        {
+            case ColliderType.BoxCollider:
+                attackColliders.attackBoxCollider.enabled = true;
+                break;
+            case ColliderType.SphereCollider:
+                attackColliders.attackSphereCollider.enabled = true;
+                break;
+
+        }
+        if (currentAbilityInformation.currentParentOfCollider == ParentOfCollider.None)
+        {
+            attackColliders.attackColliderTransform.SetParent(null);
+        }
+
+
+    }
+    public void StopDetectHit()
+    {
+        switch (currentAbilityInformation.currentColliderType)
+        {
+            case ColliderType.BoxCollider:
+                attackColliders.attackBoxCollider.enabled = false;
+                break;
+            case ColliderType.SphereCollider:
+                attackColliders.attackSphereCollider.enabled = false;
+                break;
+        }
     }
 
-    void Start()
+    public void AutoTargetHit()
     {
-        
+        MarkAHit(currentTarget.GetComponent<Stats>());
     }
 
-    // Update is called once per frame
-    void Update()
+    public void MarkAttackAbility(int index)
     {
+        UsingAbility = true;
+        currentAbilityInformation.currentAbilityIndex = index;
+        currentAbilityInformation.currentAbilityType = AbilityType.AttackAbility;
+        SetAttackColliderProperties(attackAbilities[currentAbilityInformation.currentAbilityIndex]);
+    }
+    public void MarkBasicAttack(int index)
+    {
+
+        currentAbilityInformation.currentAbilityIndex = index;
+        currentAbilityInformation.currentAbilityType = AbilityType.BasicAttack;
+        SetAttackColliderProperties(basicAttacks[index]);
+    }
+    public void MarkAHit(Stats targetStats)
+    {
+        switch (CurrentAbilityInformation.currentAbilityType)
+        {
+            case AbilityType.BasicAttack:
+                {
+                    targetStats.TakeDmg(myStats.AttackDmg + currentBasicAttacksProperties.attackDmgModifier, 0);
+                    if (currentBasicAttacksProperties.strenghOfPush != 0)
+                    {
+                        targetStats.PushCharacter(transform.position, currentBasicAttacksProperties.strenghOfPush, true);
+                    }
+                }
+                break;
+            case AbilityType.AttackAbility:
+                {
+                    targetStats.TakeDmg(myStats.AttackDmg + currentAttackAbilityProperties.attackDmg, myStats.AbilityPower + currentAttackAbilityProperties.abilityPower);
+                    if (currentAttackAbilityProperties.strenghOfPush != 0)
+                    {
+                        targetStats.TakeDmg(myStats.AttackDmg + currentAttackAbilityProperties.attackDmg, myStats.AbilityPower + currentAttackAbilityProperties.abilityPower);
+                        if (currentAttackAbilityProperties.strenghOfPush != 0)
+                        {
+                            targetStats.PushCharacter(transform.position, currentAttackAbilityProperties.strenghOfPush, false);
+                        }
+                        if (currentAttackAbilityProperties.abilityEffect != AbilityEffect.None)
+                        {
+                            targetStats.SetAbilityEffect(currentAttackAbilityProperties.abilityEffect, currentAttackAbilityProperties.abilityEffectTime, currentAttackAbilityProperties.abilityEffectValue);
+                        }
+                    }
+                }
+                break;
+        }
+    }
+    public bool PerformAttackAbility(int index)
+    {
+        if (attackAbilities[index].minDistanceToUse == 0) {
+            
+            character.SetAnimatorParametr(AnimatorParametrType.Trigger, useAbilityTrigger + index);
+            return true;
+        }
+        else if (attackAbilities[index].minDistanceToUse <= Vector3.Distance(currentTarget.position, transform.position))
+        {
+            character.SetAnimatorParametr(AnimatorParametrType.Trigger, useAbilityTrigger + index);
+            return true;
+        }
+
+        return false;
+    }
+    public bool PerformBuffAbility(int index)
+    {
+        return false;
+    }
+    public bool PerformAbility(int index)
+    {
+        Debug.Log("uzywam um " + index);
         
+        if(index > attackAbilities.Length - 1)
+        {
+            index -= attackAbilities.Length;
+            return PerformBuffAbility(index);
+        }
+        else
+        {
+            return PerformAttackAbility(index);
+            
+        }
+     
+
     }
-    public enum AbilityType
+
+    private void SetAttackColliderProperties(BasicAttack ability)
     {
-        BasicAttack,
-        AttackAbility,
-        BuffAbility,
+        switch (ability._attackColliderProperties.parentOfColldier)
+        {
+            case ParentOfCollider.Weapon:
+                {
+                    attackColliders.attackColliderTransform.SetParent(attackColliderWeaponParentTransform);
+                    currentAbilityInformation.currentParentOfCollider = ParentOfCollider.Weapon;
+                }
+                break;
+            case ParentOfCollider.CharacterObject:
+                {
+                    attackColliders.attackColliderTransform.SetParent(transform);
+                    currentAbilityInformation.currentParentOfCollider = ParentOfCollider.CharacterObject;
+
+                }
+                break;
+            case ParentOfCollider.None:
+                attackColliders.attackColliderTransform.SetParent(transform);
+                currentAbilityInformation.currentParentOfCollider = ParentOfCollider.None;
+                break;
+        }
+        attackColliders.attackColliderTransform.localPosition = ability._attackColliderProperties.positionOfCollider;
+        attackColliders.attackColliderTransform.localRotation = ability._attackColliderProperties.rotationOfCollider;
+        currentAbilityInformation.currentColliderType = ability._attackColliderProperties.colliderType;
+        switch (ability._attackColliderProperties.colliderType)
+        {
+            case ColliderType.BoxCollider:
+                {
+                    attackColliders.attackBoxCollider.center = ability._attackColliderProperties.centerOfCollider;
+                    attackColliders.attackBoxCollider.size = ability._attackColliderProperties.sizeOfCollider;
+                }
+                break;
+            case ColliderType.SphereCollider:
+                {
+                    attackColliders.attackSphereCollider.center = ability._attackColliderProperties.centerOfCollider;
+                    attackColliders.attackSphereCollider.radius = ability._attackColliderProperties.radiusOfCollider;
+                }
+                break;
+        }
     }
+
+
+
 
 
 }
