@@ -20,7 +20,6 @@ public class Stats : MonoBehaviour
     int criticalDmgChance;
     [SerializeField] private int maxCriticalDmgChance;
     int smashingDmgChance;
-    [SerializeField] private int maxSmashingDmgChance;
     private float currentPushDistance;
     public int Hp { get => hp; set => hp = value; }
     public int AttackDmg { get => attackDmg; set => attackDmg = value; }
@@ -87,6 +86,78 @@ public class Stats : MonoBehaviour
         
        
             
+    }
+    protected IEnumerator SetBuffAbilityDuration(StatType statType, float buffAbilityDuration, int buffStatValue)
+    {
+
+
+        switch (statType)
+        {
+
+            case StatType.AttackDmg:
+
+                attackDmg += buffStatValue;
+                yield return new WaitForSeconds(buffAbilityDuration);
+                attackDmg -= buffStatValue;
+                break;
+            case StatType.AbilityPower:
+
+                abilityPower += buffStatValue;
+                yield return new WaitForSeconds(buffAbilityDuration);
+                abilityPower -= buffStatValue;
+                break;
+            case StatType.Armor:
+
+                armor += buffStatValue;
+                yield return new WaitForSeconds(buffAbilityDuration);
+                armor -= buffStatValue;
+
+                break;
+            case StatType.MagicResist:
+
+                magicResist += buffStatValue;
+                yield return new WaitForSeconds(buffAbilityDuration);
+                magicResist -= buffStatValue;
+                break;
+
+
+
+
+        }
+
+
+
+    }
+
+    public void UseBuffAbility(StatType statType, float buffAbilityDuration, int buffStatValue)
+    {
+        
+        switch (statType)
+        {
+            case StatType.Hp:
+                if (hp + buffStatValue < maxHp)
+                {
+                    hp += buffStatValue;
+                }
+                else
+                {
+                    hp = maxHp;
+
+                }
+
+                break;
+            default:
+                StartCoroutine(SetBuffAbilityDuration(statType, buffAbilityDuration, buffStatValue));
+                break;
+            
+
+
+
+
+        }
+
+
+
     }
     public void SetPushDistance(float pushDistance)
     {

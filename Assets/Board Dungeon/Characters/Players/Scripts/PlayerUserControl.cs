@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerUserControl : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class PlayerUserControl : MonoBehaviour
     private FixedTouchField touchField;
     private FixedButton attackButton;
     public FixedButton[] abilityButtons;
-    private List<Vector2>[] abilityButtonLayouts;
+    public List<Vector2>[] abilityButtonLayouts;
     Vector3 cameraForward;
     Vector3 cameraRight;
     AbilityManager abilityManager;
@@ -64,6 +65,20 @@ public class PlayerUserControl : MonoBehaviour
                     abilityButtonLayouts[1].Add(new Vector2(rectTransformAttackButton.localPosition.x + xCordRelativeToAttackButton, rectTransformAttackButton.localPosition.y + yCordRelativeToAttackButton));
                 }
                 break;
+            case 3:
+                { //Here set layout for 3 ability buttons
+                    abilityButtonLayouts[2] = new List<Vector2>();
+                    xCordRelativeToAttackButton = -80;
+                    yCordRelativeToAttackButton = -60;
+                    abilityButtonLayouts[2].Add(new Vector2(rectTransformAttackButton.localPosition.x + xCordRelativeToAttackButton, rectTransformAttackButton.localPosition.y + yCordRelativeToAttackButton));
+                    xCordRelativeToAttackButton = -80;
+                    yCordRelativeToAttackButton = 60;
+                    abilityButtonLayouts[2].Add(new Vector2(rectTransformAttackButton.localPosition.x + xCordRelativeToAttackButton, rectTransformAttackButton.localPosition.y + yCordRelativeToAttackButton));
+                    xCordRelativeToAttackButton = 0;
+                    yCordRelativeToAttackButton = 80;
+                    abilityButtonLayouts[2].Add(new Vector2(rectTransformAttackButton.localPosition.x + xCordRelativeToAttackButton, rectTransformAttackButton.localPosition.y + yCordRelativeToAttackButton));
+                }
+                break;
         }    
     }
 
@@ -74,14 +89,16 @@ public class PlayerUserControl : MonoBehaviour
     private void SetAbilitiesButtons()
     {
         var buttonSkill = Resources.Load<GameObject>(resourcesDirAbilitiesButtons + abilityButtonName);
-        abilityButtons = new FixedButton[abilityManager.AttackAbilitiesCount + abilityManager.BuffAbilitiesCount];
+        abilityButtons = new FixedButton[abilityManager.AbilitiesCount];
         
-        for (int i = 0; i < abilityManager.AttackAbilitiesCount + abilityManager.BuffAbilitiesCount; i++)
+        for (int i = 0; i < abilityManager.AbilitiesCount; i++)
         {
             var currentButtonSkill = Instantiate(buttonSkill);
             currentButtonSkill.transform.SetParent(uiCanvas, false);
             abilityButtons[i] = currentButtonSkill.GetComponent<FixedButton>();
-            abilityButtons[i].GetComponent<RectTransform>().localPosition = abilityButtonLayouts[abilityManager.AttackAbilitiesCount + abilityManager.BuffAbilitiesCount - 1][i];
+            abilityButtons[i].GetComponent<RectTransform>().localPosition = abilityButtonLayouts[abilityManager.AbilitiesCount - 1][i];
+           // currentButtonSkill.GetComponent<Image>().sprite = abilityManager.GetImgOfAbility(i);
+
         }
        
 
@@ -101,11 +118,25 @@ public class PlayerUserControl : MonoBehaviour
         attackButton = FindObjectOfType<FixedButton>();
         abilityManager = playerCharacter.AbilityManager;
         comboManager = GetComponent<ComboManager>();
-        SetAbilitiesButtonLayouts(abilityManager.AttackAbilitiesCount + abilityManager.BuffAbilitiesCount);
+        SetAbilitiesButtonLayouts(abilityManager.AbilitiesCount);
         SetAbilitiesButtons();
     }
 
 
+    private void AddListenersToButtons()
+    {
+        for (int i = 0; i < abilityManager.AbilitiesCount; i++)
+        {
+
+            //abilityManager.GetAbilitiesEvent(i).AddListener(Ping);
+           // abilityManager.GetImgOfAbility(i);
+          
+        }
+    }
+    void Ping(float i)
+    {
+        Debug.Log("Ping" + i);
+    }
 
     private void HandleAbilitiyButtons()
     {

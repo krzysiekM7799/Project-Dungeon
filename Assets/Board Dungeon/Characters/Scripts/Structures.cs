@@ -35,10 +35,27 @@ public struct AttackAbilityProperties
     public float abilityEffectValue;
     public float abilityEffectTime;
 }
-public struct CurrentAbilityInformation
+public struct CurrentAbilityProperties
 {
     public int currentAbilityIndex;
     public AbilityType currentAbilityType;
     public ColliderType currentColliderType;
     public ParentOfCollider currentParentOfCollider;
+    public int attackDmg;
+    public float attackDmgMultiplier;
+    public int abilityPower;
+    public float abilityPowerMultiplier;
+    public float strenghOfPush;
+    public bool isAutoTarget;
+    public float minDistanceToUse;
+    public AbilityEffect abilityEffect;
+    public float abilityEffectValue;
+    public float abilityEffectTime;
+}
+[System.Serializable]
+public struct PlayerAbilityProperties
+{
+    [SerializeField] private Sprite image;
+    public Sprite Image { get => image;}
+    public CustomUnityEvents.FloatUnityEvent OnAbilityUse;
 }

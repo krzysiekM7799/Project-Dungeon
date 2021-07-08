@@ -23,7 +23,7 @@ using UnityEngine;
         public Rigidbody Rigidbody { get => _rigidbody; set => _rigidbody = value; }
 
 
-    public bool RotationEnabled { get => rotationEnabled; set => rotationEnabled = value; }
+        public bool RotationEnabled { get => rotationEnabled; set => rotationEnabled = value; }
         public float MovingTurnSpeed { get => movingTurnSpeed; set => movingTurnSpeed = value; }
         public float TurnAmount { get => turnAmount; set => turnAmount = value; }
     #endregion
@@ -88,7 +88,7 @@ using UnityEngine;
 
 
             animator.SetFloat("Speed", forwardAmountScaled, 0.4f, Time.deltaTime);
-            animator.SetFloat("AngularSpeed", turnAmount, 0.3f, Time.deltaTime);
+            animator.SetFloat("AngularSpeed", turnAmount, 0.2f, Time.deltaTime);
         }
 
         IEnumerator DashRootationSpeedUp(float duration)

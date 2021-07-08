@@ -25,10 +25,6 @@ public class AnimatorHelper : MonoBehaviour
     {
         abilityManager.MarkBasicAttack(index);
     }
-    public void UseAttackAbility(int index)
-    {
-        abilityManager.MarkAttackAbility(index);
-    }
     public void SetAttackColliderOn(int typeOfCollider)
     {
         abilityManager.StartDetectHit();
@@ -41,7 +37,11 @@ public class AnimatorHelper : MonoBehaviour
     {
        myStats.SetPushDistance(pushDistance);
     }
-   
+    public void AutoTargetHit()
+    {
+        abilityManager.AutoTargetHit();
+    }
+
 
 
     // Update is called once per frame

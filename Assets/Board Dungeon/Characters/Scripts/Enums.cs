@@ -29,3 +29,17 @@ public enum AnimatorParametrType
     Float,
     Int,
 }
+public enum StatType
+{
+    Hp,
+    AttackDmg,
+    AbilityPower,
+    Armor,
+    MagicResist,
+    CriticalDmgChance,
+    SmashingDmgChance,
+}
+interface IGetPlayerAbilitiesProperties
+{
+    
+}

@@ -16,6 +16,7 @@ public class IdleBehaviour : StateMachineBehaviour
         playerCharacter.AbilityManager.UsingAbility = false;
         playerCharacter.RotationEnabled = true;
         animator.SetBool("Attack", false);
+        comboManager.InputReceived = false;
         comboManager.CanReceiveInput = true;
     }
 
