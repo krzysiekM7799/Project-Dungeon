@@ -11,7 +11,7 @@ public struct AttackColliders
 public struct AttackColliderProperties
 {
     public ColliderType colliderType;
-    public ParentOfCollider parentOfColldier;
+    public ParentOfObject parentOfColldier;
     public Vector3 positionOfCollider;
     public Quaternion rotationOfCollider;
     public Vector3 centerOfCollider;
@@ -40,7 +40,7 @@ public struct CurrentAbilityProperties
     public int currentAbilityIndex;
     public AbilityType currentAbilityType;
     public ColliderType currentColliderType;
-    public ParentOfCollider currentParentOfCollider;
+    public ParentOfObject currentParentOfCollider;
     public int attackDmg;
     public float attackDmgMultiplier;
     public int abilityPower;

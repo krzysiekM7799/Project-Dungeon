@@ -10,7 +10,7 @@ public class ComboManager : MonoBehaviour
     private bool transitionEnded;
     private bool attacking;
     private int currentAttackIndex;
-    [SerializeField]private Transform currentTarget;
+    private Transform currentTarget;
     public Transform CurrentTarget { get => currentTarget; set => currentTarget = value; }
     public bool CanReceiveInput { get => canReceiveInput; set => canReceiveInput = value; }
     public bool InputReceived { get => inputReceived; set => inputReceived = value; }
@@ -22,6 +22,7 @@ public class ComboManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentTarget = GetComponent<AbilityManager>().CurrentTarget;
     }
     public void MarkAttackAsUsed()
     {

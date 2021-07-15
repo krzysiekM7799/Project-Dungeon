@@ -1,14 +1,24 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class PlayerBuffAbility : BuffAbility
 {
-    PlayerAbilityProperties playerAbilityProperties;
-    public override bool CheckAdditionalContidions()
+    
+    protected override bool CheckAdditionalContidions()
     {
-        throw new System.NotImplementedException();
+        if (abilityManager.GetAttackColliderStatus())
+            return false;
+        Debug.Log("Collider wylaczony");
+        if (_CheckAdditionalConditions())
+            return true;
+
+        return false;
     }
+
+    protected abstract bool _CheckAdditionalConditions();
+   
 
     protected override void OnSuccessfulUse()
     {
@@ -21,9 +31,13 @@ public abstract class PlayerBuffAbility : BuffAbility
     protected override void Start()
     {
         base.Start();
-        playerAbilityProperties.OnAbilityUse = new CustomUnityEvents.FloatUnityEvent();
         _Start();
 
+    }
+    protected override void Awake()
+    {
+        base.Awake();
+        playerAbilityProperties.OnAbilityUse = new CustomUnityEvents.FloatUnityEvent();
     }
     protected abstract void _Start();   
 }

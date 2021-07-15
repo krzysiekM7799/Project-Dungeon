@@ -11,7 +11,7 @@ public enum ColliderType
     BoxCollider,
     SphereCollider,
 }
-public enum ParentOfCollider
+public enum ParentOfObject
 {
     Weapon,
     CharacterObject,
@@ -39,7 +39,16 @@ public enum StatType
     CriticalDmgChance,
     SmashingDmgChance,
 }
-interface IGetPlayerAbilitiesProperties
+
+public enum BehaviourType
 {
-    
+    RunningAway,
+    Dodging,
+    UsingAbilities,
+    UsingAbilitiesWhileMoving,
+    FollowingPlayer,
+    Patroling,
+
+
+
 }

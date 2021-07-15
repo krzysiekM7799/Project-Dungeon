@@ -2,20 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AnimatorHelper : MonoBehaviour
+public abstract class AnimatorHelper : MonoBehaviour
 {
-    private PlayerCharacter playerCharacter;
-    private Animator animator;
-    private Rigidbody rigidBody;
-    private AbilityManager abilityManager;
+    
+    protected Animator animator;
+    
+    protected AbilityManager abilityManager;
     private Stats myStats;
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
-        playerCharacter = GetComponentInParent<PlayerCharacter>();
+        
         abilityManager = GetComponentInParent<AbilityManager>();
-        animator = playerCharacter.Animator;
-        rigidBody = playerCharacter.Rigidbody;
+        animator = GetComponent<Animator>();
         myStats = GetComponentInParent<Stats>();
     }
 
@@ -33,10 +32,7 @@ public class AnimatorHelper : MonoBehaviour
     {
         abilityManager.StopDetectHit();
     }
-    public void SetPushDistance(float pushDistance)
-    {
-       myStats.SetPushDistance(pushDistance);
-    }
+ 
     public void AutoTargetHit()
     {
         abilityManager.AutoTargetHit();
@@ -50,15 +46,6 @@ public class AnimatorHelper : MonoBehaviour
         
     }
 
-    public void OnAnimatorMove()
-    {
-        if (Time.deltaTime > 0)
-        {
-            Vector3 v = (animator.deltaPosition) / Time.deltaTime;
-
-
-            v.y = rigidBody.velocity.y;
-            rigidBody.velocity = v;
-        }
-    }
+    public abstract void OnAnimatorMove();
+    
 }

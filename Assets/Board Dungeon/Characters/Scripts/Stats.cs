@@ -6,20 +6,20 @@ using UnityEngine;
 public class Stats : MonoBehaviour
 {
     [SerializeField] private int lvl;
-    private int experience;
-    private int hp;
-    [SerializeField] private int maxHp;
-    private int attackDmg;
-    [SerializeField] private int maxAttackDmg;
-    int abilityPower;
-    [SerializeField] private int maxAbilityPower;
-    private int armor;
-    [SerializeField] private int maxArmor;
-    int magicResist;
-    [SerializeField] private int maxMagicResist;
-    int criticalDmgChance;
-    [SerializeField] private int maxCriticalDmgChance;
-    int smashingDmgChance;
+    protected int experience;
+    protected int hp;
+    [SerializeField] protected int maxHp;
+    protected int attackDmg;
+    [SerializeField] protected int maxAttackDmg;
+    protected int abilityPower;
+    [SerializeField] protected int maxAbilityPower;
+    protected int armor;
+    [SerializeField] protected int maxArmor;
+    protected int magicResist;
+    [SerializeField] protected int maxMagicResist;
+    protected int criticalDmgChance;
+    [SerializeField] protected int maxCriticalDmgChance;
+    
     private float currentPushDistance;
     public int Hp { get => hp; set => hp = value; }
     public int AttackDmg { get => attackDmg; set => attackDmg = value; }
@@ -27,16 +27,16 @@ public class Stats : MonoBehaviour
     public int Armor { get => armor; set => armor = value; }
     public int MagicResist { get => magicResist; set => magicResist = value; }
     public int CriticalDmgChance { get => criticalDmgChance; set => criticalDmgChance = value; }
-    public int SmashingDmgChance { get => smashingDmgChance; set => smashingDmgChance = value; }
 
-    private bool died;
-    private Character character;
-    private float[] AbilityEffectsTimes;
-    private bool characterCanBePushed = true;
+
+    protected bool died;
+    protected Character character;
+    protected float[] AbilityEffectsTimes;
     
-    float realRadius;
 
-    protected void Awake()
+    protected float realRadius;
+
+    protected virtual void Awake()
     {
         character = GetComponent<Character>();
         var AbilityEffectsCount = Enum.GetNames(typeof(AbilityEffect)).Length;
@@ -44,16 +44,19 @@ public class Stats : MonoBehaviour
         
     }
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
         realRadius = character.GetRealRadiusRadius();
+        hp = maxHp;
+        attackDmg = maxAttackDmg;
+        abilityPower = maxAbilityPower;
+        armor = maxArmor;
+        magicResist = maxMagicResist;
+        criticalDmgChance = maxCriticalDmgChance;
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+   
 
     public void TakeDmg(int attackDmg, int magicDmg)
     {
@@ -65,29 +68,10 @@ public class Stats : MonoBehaviour
     }
     public bool PushCharacter(Vector3 attackerPosition, float strengh = 1, bool relativeToAttackerPosition = false)
     {
-        if (characterCanBePushed)
-        {
-            Vector3 pushVector = (transform.position - attackerPosition);
-            pushVector.y = 0;
-            pushVector = pushVector.normalized;
-            //push distance depends on the player's position
-            if (relativeToAttackerPosition)
-            {
-                var nearestColliderPointToAttacker = transform.position - pushVector * realRadius;
-                strengh -= Vector3.Distance(nearestColliderPointToAttacker, attackerPosition);
-            }
-            Debug.Log(strengh);
-            pushVector *= strengh;
-            transform.position += pushVector;
-            return true;
-        }
-      
-        return false;
-        
-       
-            
+       return  character.PushCharacter(attackerPosition, strengh, relativeToAttackerPosition);
     }
-    protected IEnumerator SetBuffAbilityDuration(StatType statType, float buffAbilityDuration, int buffStatValue)
+
+        protected IEnumerator SetBuffAbilityDuration(StatType statType, float buffAbilityDuration, int buffStatValue)
     {
 
 
@@ -159,11 +143,8 @@ public class Stats : MonoBehaviour
 
 
     }
-    public void SetPushDistance(float pushDistance)
-    {
-        currentPushDistance = pushDistance;
-    }
-    void CheckIfDied()
+ 
+    protected void CheckIfDied()
     {
         if (Hp <= 0 && !died)
         {
@@ -172,7 +153,7 @@ public class Stats : MonoBehaviour
             Destroy(gameObject, 5f);
         }
     }
-    public int ClampPositive(int value)
+    private int ClampPositive(int value)
     {
         if (value <= 0)
         {
@@ -183,7 +164,7 @@ public class Stats : MonoBehaviour
             return value;
         }
     }
-    public float ClampPositive(float value)
+    private float ClampPositive(float value)
     {
         if (value <= 0f)
         {
@@ -195,7 +176,7 @@ public class Stats : MonoBehaviour
         }
     }
 
-    void CheckAbilityEffects()
+    private void CheckAbilityEffects()
     {
         for (int i = 0; i < AbilityEffectsTimes.Length; i++)
         {
@@ -207,7 +188,7 @@ public class Stats : MonoBehaviour
         }
     }
 
-    void PerformAbilityEffect(AbilityEffect abilityEffect)
+    private void PerformAbilityEffect(AbilityEffect abilityEffect)
     {
         switch (abilityEffect)
         {
@@ -248,7 +229,7 @@ public class Stats : MonoBehaviour
 
     }
 
-    private void FixedUpdate()
+    protected void FixedUpdate()
     {
         CheckAbilityEffects();
     }

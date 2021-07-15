@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: BasicAttack 0
   m_EditorClassIdentifier: 
   attackDmgModifier: 0
-  strenghOfPush: 3.5
+  strenghOfPush: 5
   _attackColliderProperties:
     colliderType: 0
-    parentOfColldier: 0
-    positionOfCollider: {x: 0, y: 0, z: 0}
-    rotationOfCollider: {x: -0.088836834, y: 0.06035266, z: -0.00539281, w: 0.9942015}
-    centerOfCollider: {x: -0.01, y: -0.02, z: 0.4729595}
-    sizeOfCollider: {x: 0.4, y: 0.4, z: 0.74744433}
-    radiusOfCollider: 0.5
+    parentOfColldier: 1
+    positionOfCollider: {x: -0.0059999824, y: 1.118, z: 1.233}
+    rotationOfCollider: {x: -0, y: -0, z: -0, w: 1}
+    centerOfCollider: {x: 0, y: 0, z: 0}
+    sizeOfCollider: {x: 0.89, y: 0.67, z: 1.23}
+    radiusOfCollider: 0

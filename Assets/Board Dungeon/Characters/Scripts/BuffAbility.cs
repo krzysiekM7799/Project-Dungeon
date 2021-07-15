@@ -5,9 +5,9 @@ using UnityEngine;
 
 public abstract class BuffAbility : Ability
 {
-    protected StatType buffStatType;
-    protected int[] buffStatValue = new int[3];
-    protected float[] buffStatDuration = new float[3];
+    [SerializeField] protected StatType buffStatType;
+    [SerializeField] protected int[] buffStatValue = new int[3];
+    [SerializeField] protected float[] buffStatDuration = new float[3];
     protected Stats myStats;
 
     protected virtual void Start()

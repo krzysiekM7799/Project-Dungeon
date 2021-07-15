@@ -5,40 +5,51 @@ using UnityEngine;
 public abstract class Ability : MonoBehaviour
 {
     [SerializeField] protected string _name;
-   // [SerializeField] protected Sprite image;
+
     [SerializeField] protected int lvl = 0;
     [SerializeField] protected float[] baseCooldownTimes = new float[3];
     private bool canBeUse = true;
-    //public CustomUnityEvents.FloatUnityEvent OnAbilityUse = new CustomUnityEvents.FloatUnityEvent();
+    [SerializeField] protected bool canCharacterRotateDuringAbility;
+    
     protected AbilityType abilityType;
-    // public Sprite Image { get => image; }
+    
     [SerializeField] protected bool animationNeeded = true;
     protected Animator animator;
     [SerializeField] protected ParticleSystem particle;
+    [SerializeField] protected ParentOfObject particleParent;
     protected AbilityManager abilityManager;
+    [SerializeField] public PlayerAbilityProperties playerAbilityProperties;
+    protected Character character;
 
-    protected void Awake()
+    protected virtual void Awake()
     {
         if(animationNeeded)
         animator = GetComponentInChildren<Animator>();
         
         abilityManager = GetComponent<AbilityManager>();
-}
+        character = GetComponent<Character>();
+   
+    }
+    
     protected abstract bool UseAbility();
-    public void TriggeAbility()
+    public bool TriggeAbility()
     {
         Debug.Log("wciskam");
-        if (canBeUse && CheckAdditionalContidions())
+        if (canBeUse && !abilityManager.UsingAbility && CheckAdditionalContidions())
         {
             Debug.Log("probuje1");
             if (UseAbility())
             {
+                
+                abilityManager.StopDetectHit();
+                abilityManager.UsingAbility = true;
                 OnSuccessfulUse();
                 Debug.Log("probuje2");
                 StartCoroutine(SetCoolDown());
+                return true;
             }        
         }
-      
+        return false;
     }
     protected virtual void BaseUseAbility()
     {
@@ -46,13 +57,26 @@ public abstract class Ability : MonoBehaviour
         if(animator != null)
             animator.SetTrigger(_name);
         if (particle != null)
+        {
             particle.Play();
+        }
+            
+        character.RotationEnabled = canCharacterRotateDuringAbility;
     }
-   
-    public abstract bool CheckAdditionalContidions();
+
+    protected virtual bool CheckAdditionalContidions()
+    {
+        return true;
+    }
     
-    protected abstract void SetAbilityValues();
-    protected abstract void  OnSuccessfulUse();
+    protected virtual void SetAbilityValues()
+    {
+
+    }
+    protected virtual void OnSuccessfulUse()
+    {
+
+    }
 
     private IEnumerator SetCoolDown()
     {

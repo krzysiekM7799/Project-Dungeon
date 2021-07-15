@@ -19,6 +19,7 @@ public class AttackComboBehaviour : StateMachineBehaviour
         comboManager = player.GetComponent<ComboManager>();
         comboManager.TransitionEnded = false;
         comboManager.Attacking = true;
+        playerCharacter.RotationEnabled = false;
 
     }
 
@@ -38,7 +39,7 @@ public class AttackComboBehaviour : StateMachineBehaviour
             comboManager.MarkAttackAsUsed();
             comboManager.InputReceived = false;
         }
-        playerCharacter.RotationEnabled = false;
+        
         if (comboManager.Attacking)
         {
             RotateToTarget();
@@ -57,7 +58,7 @@ public class AttackComboBehaviour : StateMachineBehaviour
         comboManager.TransitionEnded = true;
         comboManager.StartTime = Time.time;
         comboManager.Attacking = false;
-        playerCharacter.RotationEnabled = true;
+        
     }
     private void RotateToTarget()
     {

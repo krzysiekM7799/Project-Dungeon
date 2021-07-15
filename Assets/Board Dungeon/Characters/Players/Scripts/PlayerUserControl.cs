@@ -12,13 +12,14 @@ public class PlayerUserControl : MonoBehaviour
     private FixedTouchField touchField;
     private FixedButton attackButton;
     public FixedButton[] abilityButtons;
+    private FixedButton dashButton;
     public List<Vector2>[] abilityButtonLayouts;
     Vector3 cameraForward;
     Vector3 cameraRight;
     AbilityManager abilityManager;
     PlayerCharacter playerCharacter;
     ComboManager comboManager;
-    Transform uiCanvas;
+    
 
     
 
@@ -49,15 +50,15 @@ public class PlayerUserControl : MonoBehaviour
             case 1:
                 {   //Here set layout for 1 ability button
                     abilityButtonLayouts[0] = new List<Vector2>();
-                    xCordRelativeToAttackButton = -50;
-                    yCordRelativeToAttackButton = 50;
+                    xCordRelativeToAttackButton = -70;
+                    yCordRelativeToAttackButton = 80;
                     abilityButtonLayouts[0].Add(new Vector2(rectTransformAttackButton.localPosition.x + xCordRelativeToAttackButton, rectTransformAttackButton.localPosition.y + yCordRelativeToAttackButton));
                 }
                 break;
             case 2:
                 { //Here set layout for 2 ability buttons
                     abilityButtonLayouts[1] = new List<Vector2>();
-                    xCordRelativeToAttackButton = -80;
+                    xCordRelativeToAttackButton = -105;
                     yCordRelativeToAttackButton = -60;
                     abilityButtonLayouts[1].Add(new Vector2(rectTransformAttackButton.localPosition.x + xCordRelativeToAttackButton, rectTransformAttackButton.localPosition.y + yCordRelativeToAttackButton));
                     xCordRelativeToAttackButton = -80;
@@ -79,6 +80,23 @@ public class PlayerUserControl : MonoBehaviour
                     abilityButtonLayouts[2].Add(new Vector2(rectTransformAttackButton.localPosition.x + xCordRelativeToAttackButton, rectTransformAttackButton.localPosition.y + yCordRelativeToAttackButton));
                 }
                 break;
+            case 4:
+                { //Here set layout for 4 ability buttons
+                    abilityButtonLayouts[3] = new List<Vector2>();
+                    xCordRelativeToAttackButton = -245;
+                    yCordRelativeToAttackButton = -52;
+                    abilityButtonLayouts[3].Add(new Vector2(xCordRelativeToAttackButton, yCordRelativeToAttackButton));
+                    xCordRelativeToAttackButton = -219;
+                    yCordRelativeToAttackButton = 132;
+                    abilityButtonLayouts[3].Add(new Vector2( xCordRelativeToAttackButton, yCordRelativeToAttackButton));
+                    xCordRelativeToAttackButton = -67;
+                    yCordRelativeToAttackButton = 242;
+                    abilityButtonLayouts[3].Add(new Vector2(xCordRelativeToAttackButton, yCordRelativeToAttackButton));
+                    xCordRelativeToAttackButton = 119;
+                    yCordRelativeToAttackButton = 216;
+                    abilityButtonLayouts[3].Add(new Vector2( xCordRelativeToAttackButton, yCordRelativeToAttackButton));
+                }
+                break;
         }    
     }
 
@@ -94,10 +112,17 @@ public class PlayerUserControl : MonoBehaviour
         for (int i = 0; i < abilityManager.AbilitiesCount; i++)
         {
             var currentButtonSkill = Instantiate(buttonSkill);
-            currentButtonSkill.transform.SetParent(uiCanvas, false);
+            currentButtonSkill.transform.SetParent(attackButton.transform, false);
             abilityButtons[i] = currentButtonSkill.GetComponent<FixedButton>();
             abilityButtons[i].GetComponent<RectTransform>().localPosition = abilityButtonLayouts[abilityManager.AbilitiesCount - 1][i];
-           // currentButtonSkill.GetComponent<Image>().sprite = abilityManager.GetImgOfAbility(i);
+            // currentButtonSkill.GetComponent<Image>().sprite = abilityManager.GetImgOfAbility(i);
+            if (i == 0)
+            {
+                var dashButton2 = Instantiate(buttonSkill);
+                dashButton2.transform.SetParent(attackButton.transform, false);
+                dashButton = dashButton2.GetComponent<FixedButton>();
+                dashButton.GetComponent<RectTransform>().localPosition = abilityButtons[i].GetComponent<RectTransform>().localPosition + new Vector3(-200, 0, 0);
+            }
 
         }
        
@@ -106,7 +131,7 @@ public class PlayerUserControl : MonoBehaviour
     }
     void Start()
     {
-        uiCanvas = FindObjectOfType<UICanvas>().transform;
+        
 
         /* Szablon dla przyciskow skilli
          * var leftJoystickGO = Instantiate(Resources.Load<GameObject>(resourcesDirLeftJoystick + currentJoystickName));
@@ -120,6 +145,7 @@ public class PlayerUserControl : MonoBehaviour
         comboManager = GetComponent<ComboManager>();
         SetAbilitiesButtonLayouts(abilityManager.AbilitiesCount);
         SetAbilitiesButtons();
+        AddListenersToButtons();
     }
 
 
@@ -127,10 +153,16 @@ public class PlayerUserControl : MonoBehaviour
     {
         for (int i = 0; i < abilityManager.AbilitiesCount; i++)
         {
+            var abilityUI = abilityButtons[i].transform.GetComponent<AbilityCooldownUI>();
 
             //abilityManager.GetAbilitiesEvent(i).AddListener(Ping);
-           // abilityManager.GetImgOfAbility(i);
-          
+            
+            abilityUI.AbilityImageSprite = abilityManager.abilities[i].playerAbilityProperties.Image;
+
+            abilityManager.abilities[i].playerAbilityProperties.OnAbilityUse.AddListener(abilityUI.PerformUICooldown);
+           // Debug.Log(abilityManager.abilities[i].playerAbilityProperties.OnAbilityUse);
+            // abilityManager.GetImgOfAbility(i);
+
         }
     }
     void Ping(float i)
@@ -181,10 +213,12 @@ public class PlayerUserControl : MonoBehaviour
         playerCharacter.Move(move);
 
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.LeftShift) || dashButton.Pressed)
         {
             if(!abilityManager.UsingAbility)
             playerCharacter.MakeDash();
+            dashButton.Pressed = false;
+
         }
 
         HandleButtons();

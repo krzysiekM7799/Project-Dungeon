@@ -11,7 +11,8 @@ public class AbilityManager : MonoBehaviour
     Transform attackColliderWeaponParentTransform;
     //List of Basic Attack scriptable objects
     [SerializeField] private BasicAttack[] basicAttacks;
-    [SerializeField] private Ability[] abilities;
+    //List of abilites components
+    [SerializeField] public Ability[] abilities;
     private int abilitiesCount;
     public int AbilitiesCount { get => abilitiesCount;}
     
@@ -63,7 +64,6 @@ public class AbilityManager : MonoBehaviour
     public void SetCurrentAttackAbilitiesProperties(int attackDmg,float attackDmgMultiplier , int abilityPower,float abilityPowerMultiplier , float strenghOfPush, AbilityEffect abilityEffect, float abilityEffectValue, float abilityEffectTime)
     {
         currentAbilityProperties.currentAbilityType = AbilityType.AttackAbility;
-        UsingAbility = true;
         currentAbilityProperties.attackDmg = attackDmg;
         currentAbilityProperties.attackDmgMultiplier = attackDmgMultiplier;
         currentAbilityProperties.abilityPower = abilityPower;
@@ -97,7 +97,7 @@ public class AbilityManager : MonoBehaviour
     }
     private void Start()
     {
-        attackColliderWeaponParentTransform = attackColliders.attackColliderTransform.parent;
+       // attackColliderWeaponParentTransform = attackColliders.attackColliderTransform.parent;
         myStats = GetComponent<Stats>();
     }
     //Methods for enable or disable attack collider for animation events (non target attack abilities)
@@ -113,7 +113,7 @@ public class AbilityManager : MonoBehaviour
                 break;
 
         }
-        if (currentAbilityProperties.currentParentOfCollider == ParentOfCollider.None)
+        if (currentAbilityProperties.currentParentOfCollider == ParentOfObject.None)
         {
             attackColliders.attackColliderTransform.SetParent(null);
         }
@@ -161,19 +161,19 @@ public class AbilityManager : MonoBehaviour
             case AbilityType.AttackAbility:
                 {
                     
+
                     targetStats.TakeDmg(currentAbilityProperties.attackDmg + (int)(myStats.AttackDmg * currentAbilityProperties.attackDmgMultiplier), currentAbilityProperties.abilityPower + (int)(myStats.AbilityPower * currentAbilityProperties.abilityPowerMultiplier));
-                    if (currentAbilityProperties.strenghOfPush != 0)
-                    {
-                        targetStats.TakeDmg(myStats.AttackDmg + currentAbilityProperties.attackDmg, myStats.AbilityPower + currentAbilityProperties.abilityPower);
+                  
                         if (currentAbilityProperties.strenghOfPush != 0)
                         {
                             targetStats.PushCharacter(transform.position, currentAbilityProperties.strenghOfPush, false);
                         }
                         if (currentAbilityProperties.abilityEffect != AbilityEffect.None)
                         {
+                            
                             targetStats.SetAbilityEffect(currentAbilityProperties.abilityEffect, currentAbilityProperties.abilityEffectTime, currentAbilityProperties.abilityEffectValue);
                         }
-                    }
+                    
                 }
                 break;
         }
@@ -186,22 +186,22 @@ public class AbilityManager : MonoBehaviour
     {
         switch (attackColliderProperties.parentOfColldier)
         {
-            case ParentOfCollider.Weapon:
+            case ParentOfObject.Weapon:
                 {
-                    attackColliders.attackColliderTransform.SetParent(attackColliderWeaponParentTransform);
-                     currentAbilityProperties.currentParentOfCollider = ParentOfCollider.Weapon;
+                   // attackColliders.attackColliderTransform.SetParent(attackColliderWeaponParentTransform);
+                     currentAbilityProperties.currentParentOfCollider = ParentOfObject.Weapon;
                 }
                 break;
-            case ParentOfCollider.CharacterObject:
+            case ParentOfObject.CharacterObject:
                 {
                     attackColliders.attackColliderTransform.SetParent(transform);
-                    currentAbilityProperties.currentParentOfCollider = ParentOfCollider.CharacterObject;
+                    currentAbilityProperties.currentParentOfCollider = ParentOfObject.CharacterObject;
 
                 }
                 break;
-            case ParentOfCollider.None:
+            case ParentOfObject.None:
                 attackColliders.attackColliderTransform.SetParent(transform);
-                currentAbilityProperties.currentParentOfCollider = ParentOfCollider.None;
+                currentAbilityProperties.currentParentOfCollider = ParentOfObject.None;
                 break;
         }
         

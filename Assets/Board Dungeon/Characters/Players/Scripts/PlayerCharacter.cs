@@ -13,25 +13,28 @@ using UnityEngine;
         [SerializeField] private float speedAnimationMultiplier = 1f;
         [SerializeField] private float runAmountScaler = 3.78f;
         [SerializeField] private float walkAmount = 1.58f;
-        private bool m_IsGrounded;
+        [SerializeField] private float speedDamp = 0.4f;
+        [SerializeField] private float angularSpeedDamp = 0.2f;
+        
 
         private float turnAmount;
         private float forwardAmount;
-        private bool rotationEnabled = true;
+        
 
         protected Rigidbody _rigidbody;
         public Rigidbody Rigidbody { get => _rigidbody; set => _rigidbody = value; }
 
 
-        public bool RotationEnabled { get => rotationEnabled; set => rotationEnabled = value; }
+        
         public float MovingTurnSpeed { get => movingTurnSpeed; set => movingTurnSpeed = value; }
         public float TurnAmount { get => turnAmount; set => turnAmount = value; }
     #endregion
 
 
 
-    protected override void MyAwake()
+    protected override void Awake()
     {
+        base.Awake();
         _rigidbody = GetComponent<Rigidbody>();
     }
 
@@ -48,7 +51,7 @@ using UnityEngine;
 
         }
         //Move player method
-        public void Move(Vector3 move)
+        public override void  Move(Vector3 move)
         {
             if (move.magnitude > 1f) move.Normalize(); //zostawia kierunek ustawia dlugosc na jeden
             move = transform.InverseTransformDirection(move); //zmienia kierunek z globalnego na lokalny
@@ -87,8 +90,8 @@ using UnityEngine;
             }
 
 
-            animator.SetFloat("Speed", forwardAmountScaled, 0.4f, Time.deltaTime);
-            animator.SetFloat("AngularSpeed", turnAmount, 0.2f, Time.deltaTime);
+            animator.SetFloat("Speed", forwardAmountScaled, speedDamp, Time.deltaTime);
+            animator.SetFloat("AngularSpeed", turnAmount, angularSpeedDamp, Time.deltaTime);
         }
 
         IEnumerator DashRootationSpeedUp(float duration)
@@ -104,6 +107,9 @@ using UnityEngine;
             StartCoroutine(DashRootationSpeedUp(duration));
         }
 
-
+    protected override bool PerformPushing(Vector3 pushVector)
+    {
+        return true;
     }
+}
 

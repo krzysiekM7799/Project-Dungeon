@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Character : MonoBehaviour
+public abstract class Character : MonoBehaviour
 {
     //Basic components
     protected Animator animator;
@@ -15,33 +15,62 @@ public class Character : MonoBehaviour
     //Movement properties
     public float MaxSpeed { get; set; }
     public float CurrentSpeed { get; set; }
+    protected bool rotationEnabled = true;
+    public bool RotationEnabled { get => rotationEnabled; set => rotationEnabled = value; }
 
-   
+
     //Targeting properties
     public Animator Animator { get => animator; set => animator = value; }
     public AbilityManager AbilityManager { get => abilityManager; set => abilityManager = value; }
 
-    
 
+    protected bool characterCanBePushed = true;
+    protected float realRadius;
 
     public float GetRealRadiusRadius()
     {
         return m_Capsule.radius * transform.localScale.x;
     }
  
-    protected void Awake()
+    protected virtual void Awake()
     {
         animator = GetComponentInChildren<Animator>();
         m_Capsule = GetComponent<CapsuleCollider>();
         abilityManager = GetComponent<AbilityManager>();
-        MyAwake();
+        realRadius = GetRealRadiusRadius(); 
+    
     }
 
-    protected virtual void MyAwake()
+
+    public bool PushCharacter(Vector3 attackerPosition, float strengh = 1, bool relativeToAttackerPosition = false)
     {
+        if (characterCanBePushed)
+        {
+            Vector3 pushVector = (transform.position - attackerPosition);
+            pushVector.y = 0;
+            pushVector = pushVector.normalized;
+            //push distance depends on the player's position
+            if (relativeToAttackerPosition)
+            {
+                var nearestColliderPointToAttacker = transform.position - pushVector * realRadius;
+                strengh -= Vector3.Distance(nearestColliderPointToAttacker, attackerPosition);
+            }
+            Debug.Log(strengh);
+            animator.SetTrigger("Hit");
+            pushVector *= strengh;
+            return PerformPushing(pushVector);
+        }
+
+        return false;
+
+
 
     }
-   
+    protected abstract bool PerformPushing(Vector3 pushVector);
+    
+    public abstract void Move(Vector3 vector);
+    
+
 
     public void SetAnimatorParametr(AnimatorParametrType animatorParametrType, string parametrName, float parametrValue = 0)
     {
@@ -63,7 +92,7 @@ public class Character : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
         
         

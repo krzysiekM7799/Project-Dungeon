@@ -15,6 +15,8 @@ public class AttackManager : MonoBehaviour
         {
             Debug.Log("HIT");
             Stats targetStats = other.transform.GetComponent<Stats>();
+            CameraEffects.ShakeOnce(0.3f);
+            
             abilityManager.MarkAHit(targetStats);
         }
     }
