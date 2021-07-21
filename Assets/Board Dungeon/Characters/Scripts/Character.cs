@@ -6,26 +6,25 @@ using UnityEngine;
 public abstract class Character : MonoBehaviour
 {
     //Basic components
+
     protected Animator animator;
-    //Character properties
     protected CapsuleCollider m_Capsule;
     protected AbilityManager abilityManager;
 
-
     //Movement properties
+
     public float MaxSpeed { get; set; }
-    public float CurrentSpeed { get; set; }
     protected bool rotationEnabled = true;
     public bool RotationEnabled { get => rotationEnabled; set => rotationEnabled = value; }
 
-
-    //Targeting properties
-    public Animator Animator { get => animator; set => animator = value; }
-    public AbilityManager AbilityManager { get => abilityManager; set => abilityManager = value; }
-
-
-    protected bool characterCanBePushed = true;
+    //If charracter can be pushed
+    public bool CharacterCanBePushed = true;
+    //Here the true radius of the character's capsule is held
     protected float realRadius;
+
+    //Properties
+
+    public Animator Animator { get => animator; set => animator = value; }
 
     public float GetRealRadiusRadius()
     {
@@ -40,12 +39,12 @@ public abstract class Character : MonoBehaviour
         realRadius = GetRealRadiusRadius(); 
     
     }
-
-
+    //Method that allows you to push the character away while receiving hit over a certain distance (relative to the attacking character or not)
     public bool PushCharacter(Vector3 attackerPosition, float strengh = 1, bool relativeToAttackerPosition = false)
     {
-        if (characterCanBePushed)
+        if (!abilityManager.UsingAbility)
         {
+            abilityManager.StopDetectHit();
             Vector3 pushVector = (transform.position - attackerPosition);
             pushVector.y = 0;
             pushVector = pushVector.normalized;
@@ -60,6 +59,10 @@ public abstract class Character : MonoBehaviour
             pushVector *= strengh;
             return PerformPushing(pushVector);
         }
+        else
+        {
+            animator.SetTrigger("HitInPlace");
+        }
 
         return false;
 
@@ -67,40 +70,14 @@ public abstract class Character : MonoBehaviour
 
     }
     protected abstract bool PerformPushing(Vector3 pushVector);
-    
+    //Main move character method
     public abstract void Move(Vector3 vector);
     
-
-
-    public void SetAnimatorParametr(AnimatorParametrType animatorParametrType, string parametrName, float parametrValue = 0)
-    {
-        switch (animatorParametrType)
-        {
-            case AnimatorParametrType.Trigger:
-                animator.SetTrigger(parametrName);
-                break;
-            case AnimatorParametrType.Float:
-                animator.SetFloat(parametrName, parametrValue);
-                break;
-            case AnimatorParametrType.Int:
-                animator.SetInteger(parametrName, (int)parametrValue);
-                break;
-        }
-    }
-
-    // protected abstract void MyAwake();
-
-
-    // Start is called before the first frame update
     protected virtual void Start()
     {
         
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+   
 }

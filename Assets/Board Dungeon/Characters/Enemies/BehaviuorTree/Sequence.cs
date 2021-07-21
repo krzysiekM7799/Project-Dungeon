@@ -19,9 +19,20 @@ public class Sequence : BTNode
     }
     public void SetChildrenOfNode(List<BTNode> nodes)
     {
-        m_nodes = nodes;
+        foreach (var item in nodes)
+        {
+            m_nodes.Add(item);
+        }
+        
     }
-    public List<BTNode> MakeSimpleSequenceNode(ActionNode.ActionNodeDelegate CheckConditions, ActionNode.ActionNodeDelegate Trigge)
+    public void SetChildrenOfNode(BTNode node)
+    {
+       
+            m_nodes.Add(node);
+        
+
+    }
+    public static List<BTNode> MakeSimpleSequenceNode(ActionNode.ActionNodeDelegate CheckConditions, ActionNode.ActionNodeDelegate Trigge)
     {
         var conditions = new ActionNode(CheckConditions);
 

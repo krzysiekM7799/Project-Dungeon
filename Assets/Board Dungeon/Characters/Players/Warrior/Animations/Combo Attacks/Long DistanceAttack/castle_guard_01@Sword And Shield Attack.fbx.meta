@@ -73,7 +73,7 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.5241245
+      - time: 0.52005947
         functionName: SetAttackColliderOff
         data: 
         objectReferenceParameter: {instanceID: 0}

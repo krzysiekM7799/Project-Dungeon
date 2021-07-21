@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerStats : Stats
 {
-    // Start is called before the first frame update
-    // Start is called before the first frame update
+    
+    private PlayerCharacter playerCharacter;
     protected override void Start()
     {
         base.Start();
@@ -14,6 +14,9 @@ public class PlayerStats : Stats
     protected override void Awake()
     {
         base.Awake();
+        playerCharacter = GetComponent<PlayerCharacter>();
+
+        character = playerCharacter;
     }
     // Update is called once per frame
 

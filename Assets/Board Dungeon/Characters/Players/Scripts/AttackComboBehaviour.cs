@@ -14,9 +14,12 @@ public class AttackComboBehaviour : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.SetBool("Attack", false);
-        player = GameController.instance.Player;
-        playerCharacter = player.GetComponent<PlayerCharacter>();
-        comboManager = player.GetComponent<ComboManager>();
+        if (player == null)
+        {
+            player = GameController.instance.PlayerTransform;
+            playerCharacter = GameController.instance.PlayerCharacter;
+            comboManager = playerCharacter.ComboManager;
+        }
         comboManager.TransitionEnded = false;
         comboManager.Attacking = true;
         playerCharacter.RotationEnabled = false;
@@ -62,7 +65,7 @@ public class AttackComboBehaviour : StateMachineBehaviour
     }
     private void RotateToTarget()
     {
-        Vector3 positionLook = comboManager.CurrentTarget.position - player.position;
+        Vector3 positionLook = playerCharacter.PlayerAbilityManager.CurrentTarget.position - player.position;
         positionLook.y = 0;
         Quaternion rotation = Quaternion.LookRotation(positionLook);
         player.rotation = Quaternion.Slerp(player.rotation, rotation, Time.deltaTime * 5);

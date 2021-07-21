@@ -11,33 +11,44 @@ public class PlayerUserControl : MonoBehaviour
     private const string abilityButtonName = "AbilityButton";
     private FixedTouchField touchField;
     private FixedButton attackButton;
-    public FixedButton[] abilityButtons;
+    private FixedButton[] abilityButtons;
     private FixedButton dashButton;
-    public List<Vector2>[] abilityButtonLayouts;
-    Vector3 cameraForward;
-    Vector3 cameraRight;
-    AbilityManager abilityManager;
-    PlayerCharacter playerCharacter;
-    ComboManager comboManager;
+    private List<Vector2>[] abilityButtonLayouts;
     
+    //Camera properties needed to transform the motion vector
+    private Vector3 cameraForward;
+    private Vector3 cameraRight;
 
-    
+    //Basic components needed by the class
+    private PlayerCharacter playerCharacter;
+    private PlayerAbilityManager playerAbilityManager;
+    private ComboManager comboManager;
 
-    public FixedJoystick LeftJoystick { get => leftJoystick;}
+    public FixedJoystick LeftJoystick { get => leftJoystick; }
     public PlayerCharacter PlayerCharacter { get => playerCharacter; set => playerCharacter = value; }
-    public FixedTouchField TouchField { get => touchField;}
+    public FixedTouchField TouchField { get => touchField; }
     public Vector3 CameraForward { get => cameraForward; set => cameraForward = value; }
     public Vector3 CameraRight { get => cameraRight; set => cameraRight = value; }
-
-
-
-
-    // Start is called before the first frame update
 
     private void Awake()
     {
         playerCharacter = GetComponent<PlayerCharacter>();
-        
+        playerAbilityManager = playerCharacter.PlayerAbilityManager;
+        comboManager = playerCharacter.ComboManager;
+    }
+    void Start()
+    {
+        /* Szablon dla przyciskow skilli
+         * var leftJoystickGO = Instantiate(Resources.Load<GameObject>(resourcesDirLeftJoystick + currentJoystickName));
+          leftJoystickGO.transform.SetParent(uiCanvas,false);
+          leftJoystick = leftJoystickGO.GetComponent<FixedJoystick>();*/
+
+        leftJoystick = FindObjectOfType<FixedJoystick>();
+        touchField = FindObjectOfType<FixedTouchField>();
+        attackButton = FindObjectOfType<FixedButton>();
+        SetAbilitiesButtonLayouts(playerAbilityManager.AbilitiesCount);
+        SetAbilitiesButtons();
+        AddListenersToButtons();
     }
     private void SetAbilitiesButtonLayouts(int buttonsCount)
     {
@@ -88,33 +99,33 @@ public class PlayerUserControl : MonoBehaviour
                     abilityButtonLayouts[3].Add(new Vector2(xCordRelativeToAttackButton, yCordRelativeToAttackButton));
                     xCordRelativeToAttackButton = -219;
                     yCordRelativeToAttackButton = 132;
-                    abilityButtonLayouts[3].Add(new Vector2( xCordRelativeToAttackButton, yCordRelativeToAttackButton));
+                    abilityButtonLayouts[3].Add(new Vector2(xCordRelativeToAttackButton, yCordRelativeToAttackButton));
                     xCordRelativeToAttackButton = -67;
                     yCordRelativeToAttackButton = 242;
                     abilityButtonLayouts[3].Add(new Vector2(xCordRelativeToAttackButton, yCordRelativeToAttackButton));
                     xCordRelativeToAttackButton = 119;
                     yCordRelativeToAttackButton = 216;
-                    abilityButtonLayouts[3].Add(new Vector2( xCordRelativeToAttackButton, yCordRelativeToAttackButton));
+                    abilityButtonLayouts[3].Add(new Vector2(xCordRelativeToAttackButton, yCordRelativeToAttackButton));
                 }
                 break;
-        }    
+        }
     }
 
-       
 
 
-    
+
+
     private void SetAbilitiesButtons()
     {
         var buttonSkill = Resources.Load<GameObject>(resourcesDirAbilitiesButtons + abilityButtonName);
-        abilityButtons = new FixedButton[abilityManager.AbilitiesCount];
-        
-        for (int i = 0; i < abilityManager.AbilitiesCount; i++)
+        abilityButtons = new FixedButton[playerAbilityManager.AbilitiesCount];
+
+        for (int i = 0; i < playerAbilityManager.AbilitiesCount; i++)
         {
             var currentButtonSkill = Instantiate(buttonSkill);
             currentButtonSkill.transform.SetParent(attackButton.transform, false);
             abilityButtons[i] = currentButtonSkill.GetComponent<FixedButton>();
-            abilityButtons[i].GetComponent<RectTransform>().localPosition = abilityButtonLayouts[abilityManager.AbilitiesCount - 1][i];
+            abilityButtons[i].GetComponent<RectTransform>().localPosition = abilityButtonLayouts[playerAbilityManager.AbilitiesCount - 1][i];
             // currentButtonSkill.GetComponent<Image>().sprite = abilityManager.GetImgOfAbility(i);
             if (i == 0)
             {
@@ -125,58 +136,36 @@ public class PlayerUserControl : MonoBehaviour
             }
 
         }
-       
 
 
-    }
-    void Start()
-    {
-        
 
-        /* Szablon dla przyciskow skilli
-         * var leftJoystickGO = Instantiate(Resources.Load<GameObject>(resourcesDirLeftJoystick + currentJoystickName));
-          leftJoystickGO.transform.SetParent(uiCanvas,false);
-          leftJoystick = leftJoystickGO.GetComponent<FixedJoystick>();*/
-
-        leftJoystick = FindObjectOfType<FixedJoystick>();
-        touchField = FindObjectOfType<FixedTouchField>();
-        attackButton = FindObjectOfType<FixedButton>();
-        abilityManager = playerCharacter.AbilityManager;
-        comboManager = GetComponent<ComboManager>();
-        SetAbilitiesButtonLayouts(abilityManager.AbilitiesCount);
-        SetAbilitiesButtons();
-        AddListenersToButtons();
     }
 
 
     private void AddListenersToButtons()
     {
-        for (int i = 0; i < abilityManager.AbilitiesCount; i++)
+        for (int i = 0; i < playerAbilityManager.AbilitiesCount; i++)
         {
             var abilityUI = abilityButtons[i].transform.GetComponent<AbilityCooldownUI>();
 
             //abilityManager.GetAbilitiesEvent(i).AddListener(Ping);
-            
-            abilityUI.AbilityImageSprite = abilityManager.abilities[i].playerAbilityProperties.Image;
 
-            abilityManager.abilities[i].playerAbilityProperties.OnAbilityUse.AddListener(abilityUI.PerformUICooldown);
-           // Debug.Log(abilityManager.abilities[i].playerAbilityProperties.OnAbilityUse);
+
+            abilityUI.AbilityImageSprite = playerAbilityManager.PlayerAbilities[i].playerAbilityProperties.Image;
+
+            playerAbilityManager.PlayerAbilities[i].playerAbilityProperties.OnAbilityUse.AddListener(abilityUI.PerformUICooldown);
+            // Debug.Log(abilityManager.abilities[i].playerAbilityProperties.OnAbilityUse);
             // abilityManager.GetImgOfAbility(i);
 
         }
     }
-    void Ping(float i)
-    {
-        Debug.Log("Ping" + i);
-    }
-
     private void HandleAbilitiyButtons()
     {
         for (int i = 0; i < abilityButtons.Length; i++)
         {
             if (abilityButtons[i].Pressed)
             {
-                abilityManager.PerformAbility(i);
+                playerAbilityManager.PerformAbility(i);
                 abilityButtons[i].Pressed = false;
             }
         }
@@ -193,7 +182,7 @@ public class PlayerUserControl : MonoBehaviour
     {
         HandleAbilitiyButtons();
         HandleAttackButton();
-        
+
     }
     // Update is called once per frame
     void Update()
@@ -208,15 +197,15 @@ public class PlayerUserControl : MonoBehaviour
 
         //ZAMIENIC NA Vinput Hinput
         Vector3 move = vInput * cameraForward + hInput * cameraRight;
-        
-    //    Vector3  move = vInput * Vector3.forward + hInput * Vector3.right;
+
+        //    Vector3  move = vInput * Vector3.forward + hInput * Vector3.right;
         playerCharacter.Move(move);
 
 
         if (Input.GetKeyDown(KeyCode.LeftShift) || dashButton.Pressed)
         {
-            if(!abilityManager.UsingAbility)
-            playerCharacter.MakeDash();
+            if (!playerAbilityManager.UsingAbility)
+                playerCharacter.MakeDash();
             dashButton.Pressed = false;
 
         }

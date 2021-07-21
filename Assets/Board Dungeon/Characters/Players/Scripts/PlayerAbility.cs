@@ -1,42 +1,35 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAbility : Ability
+public abstract class  PlayerAbility : Ability
 {
     [SerializeField] public PlayerAbilityProperties playerAbilityProperties;
+    protected PlayerCharacter playerCharacter;
+    [SerializeField] protected bool canCharacterRotateDuringAbility;
+    protected override bool CheckAdditionalContidions()
+    {
+        if (abilityManager.GetAttackColliderStatus())
+            return false;
+     
+        return true;
 
-  
+    }
 
     protected override void OnSuccessfulUse()
     {
-        throw new System.NotImplementedException();
-    }
+        playerCharacter.RotationEnabled = canCharacterRotateDuringAbility;
+        playerAbilityProperties.OnAbilityUse.Invoke(baseCooldownTimes[lvl]);
 
-    protected override void SetAbilityValues()
-    {
-        throw new System.NotImplementedException();
     }
-
-    protected override bool UseAbility()
-    {
-        throw new System.NotImplementedException();
-    }
-
+   
     protected override void Awake()
     {
         base.Awake();
+        playerCharacter = GetComponent<PlayerCharacter>();
+        playerAbilityProperties.OnAbilityUse = new CustomUnityEvents.FloatUnityEvent();
+
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

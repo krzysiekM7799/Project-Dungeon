@@ -66,14 +66,14 @@ ModelImporter:
         floatParameter: 0
         intParameter: 3
         messageOptions: 0
-      - time: 0.5042879
+      - time: 0.49899828
         functionName: SetAttackColliderOn
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.5428571
+      - time: 0.53173506
         functionName: SetAttackColliderOff
         data: 
         objectReferenceParameter: {instanceID: 0}

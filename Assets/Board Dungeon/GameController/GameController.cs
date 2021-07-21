@@ -8,14 +8,18 @@ public class GameController : MonoBehaviour
     public static GameController instance;
     void Awake()
     {
+        
+        playerTransform = FindObjectOfType<PlayerCharacter>().transform;
+        playerCharacter = playerTransform.GetComponent<PlayerCharacter>();
         instance = this;
-        player = FindObjectOfType<PlayerCharacter>().transform;
     }
 
     #endregion
-    Transform player;
+    Transform playerTransform;
+    PlayerCharacter playerCharacter;
 
-    public Transform Player { get => player; set => player = value; }
+    public Transform PlayerTransform { get => playerTransform; set => playerTransform = value; }
+    public PlayerCharacter PlayerCharacter { get => playerCharacter; set => playerCharacter = value; }
 
 
 

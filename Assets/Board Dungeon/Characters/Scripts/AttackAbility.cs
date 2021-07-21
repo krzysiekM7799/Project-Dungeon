@@ -1,67 +1,69 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
-public abstract class AttackAbility : Ability
+[System.Serializable]
+public class AttackAbility
 {
-    [SerializeField] protected int[] attackDmg = new int[3];
+    [SerializeField] protected int[] attackDmg = new int[1];
     [SerializeField] protected float attackDmgMultiplier;
-    [SerializeField] protected int[] abilityPower = new int[3];
+    [SerializeField] protected int[] abilityPower = new int[1];
     [SerializeField] protected float abilityPowerMultiplier;
     [SerializeField] protected bool isAutoTarget;
     [SerializeField] protected float minDistanceToUse;
-    [SerializeField] protected AbilityEffect abilityEffect;
-    [SerializeField] protected float[] abilityEffectValue = new float[3];
-    [SerializeField] protected float[] abilityEffectTime = new float[3];
+    [SerializeField] protected AbilityEffect abilityEffect = AbilityEffect.None;
+    [SerializeField] protected float[] abilityEffectValue = new float[1];
+    [SerializeField] protected float[] abilityEffectTime = new float[1];
     [SerializeField] protected float[] strenghOfPush = new float[1];
     [SerializeField] protected AttackColliderProperties attackColliderProperties;
     [SerializeField] protected Animation attackColliderAnimation;
-    [SerializeField] protected string animationName; 
-    
+    [SerializeField] protected string animationName;
+    private AbilityManager abilityManager;
+    private Transform transform;
 
-
-    protected virtual void Start()
+    //Have to set it by setter (not constructor), to take information about properties from editor
+    public void SetAttackAbilityProperties(AbilityManager abilityManager, Transform transform)
     {
-        abilityType = AbilityType.AttackAbility;
+        this.abilityManager = abilityManager;
+        this.transform = transform;
     }
-   
 
-    protected override bool UseAbility()
-    {
-        return BasicAttackAbility();
-    }
-   
-    protected bool BasicAttackAbility()
+    public bool UseAttackAbility(int abilityLvl)
     {
         if (!isAutoTarget)
         {
+            SetAttackAbilityValues(abilityLvl);
             Debug.Log("jestem");
-            BaseUseAbility();
+            AttackColliderAnimation();
             return true;
         }
         else if (minDistanceToUse >= Vector3.Distance(abilityManager.CurrentTarget.position, transform.position))
         {
+            SetAttackAbilityValues(abilityLvl);
             var lookDirection = abilityManager.CurrentTarget.position;
             lookDirection.y = transform.position.y;
             transform.LookAt(lookDirection);
-            BaseUseAbility();
+            AttackColliderAnimation();
             return true;
         }
         return false;
     }
-    protected override void BaseUseAbility()
+    public void AttackColliderAnimation()
     {
-        base.BaseUseAbility();
+        
         if (attackColliderAnimation != null)
             attackColliderAnimation.Play(animationName);
     }
 
-    protected override void SetAbilityValues()
+    public  void SetAttackAbilityValues(int abilityLvl)
     {
-        abilityManager.SetCurrentAttackAbilitiesProperties(attackDmg[lvl], attackDmgMultiplier ,abilityPower[lvl],abilityPowerMultiplier ,(strenghOfPush.Length - 1  < lvl) ? strenghOfPush[strenghOfPush.Length -1] : strenghOfPush[lvl], abilityEffect, abilityEffectValue[lvl], abilityEffectTime[lvl]);
+        abilityManager.SetCurrentAttackAbilitysProperties(attackDmg[ThingCalculator.CheckAbilityLvl(attackDmg.Length, abilityLvl)],
+            attackDmgMultiplier, 
+            abilityPower[ThingCalculator.CheckAbilityLvl(abilityPower.Length,abilityLvl)], 
+            abilityPowerMultiplier, 
+            strenghOfPush[ThingCalculator.CheckAbilityLvl(strenghOfPush.Length,abilityLvl)],
+            abilityEffect, 
+            abilityEffectValue[ThingCalculator.CheckAbilityLvl(abilityEffectValue.Length, abilityLvl)], 
+            abilityEffectTime[ThingCalculator.CheckAbilityLvl(abilityEffectTime.Length, abilityLvl)]);
         if(!isAutoTarget)
         abilityManager.SetAttackColliderProperties(attackColliderProperties);
     }
-   
 }

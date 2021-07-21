@@ -4,23 +4,14 @@ using UnityEngine;
 
 public class SimplePlayerAttackAbility : PlayerAttackAbility
 {
-    protected override bool _CheckAdditionalConditions()
+
+
+    protected override void OnSuccessfulUse()
     {
-        return true;
+        base.OnSuccessfulUse();
+
     }
 
-    protected override void _OnSuccessfulUse()
-    {
-        
-    }
-
-    protected override void _SetAbilityValues()
-    {
-       
-    }
-
-    protected override void _Start()
-    {
-        
-    }
+   
+   
 }

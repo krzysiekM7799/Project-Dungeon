@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class EnemyStats : Stats
 {
-    private Vector3 wherePush;
-    private float lastTimePushed;
-    private bool isPushed;
+    private EnemyCharacter enemyCharacter;
     
 
 
@@ -20,6 +18,8 @@ public class EnemyStats : Stats
     protected override void Awake()
     {
         base.Awake();
+        enemyCharacter = GetComponent<EnemyCharacter>();
+        character = enemyCharacter;
     }
 
     

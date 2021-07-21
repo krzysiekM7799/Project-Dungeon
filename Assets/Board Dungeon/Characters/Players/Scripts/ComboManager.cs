@@ -10,8 +10,8 @@ public class ComboManager : MonoBehaviour
     private bool transitionEnded;
     private bool attacking;
     private int currentAttackIndex;
-    private Transform currentTarget;
-    public Transform CurrentTarget { get => currentTarget; set => currentTarget = value; }
+    private PlayerCharacter playerCharacter;
+    
     public bool CanReceiveInput { get => canReceiveInput; set => canReceiveInput = value; }
     public bool InputReceived { get => inputReceived; set => inputReceived = value; }
     public float StartTime { get => startTime; set => startTime = value; }
@@ -20,9 +20,9 @@ public class ComboManager : MonoBehaviour
     public int CurrentAttackIndex { get => currentAttackIndex; set => currentAttackIndex = value; }
 
     // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        currentTarget = GetComponent<AbilityManager>().CurrentTarget;
+        playerCharacter = GetComponent<PlayerCharacter>();
     }
     public void MarkAttackAsUsed()
     {
@@ -44,12 +44,7 @@ public class ComboManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
 
-            if (CanReceiveInput)
-            {
-                InputReceived = true;
-                CanReceiveInput = false;
-
-            }
+            HandleAttack();
 
 
         }

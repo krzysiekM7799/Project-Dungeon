@@ -2,50 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class PlayerAttackAbility : AttackAbility
+public class PlayerAttackAbility : PlayerAbility
 {
-    protected override bool CheckAdditionalContidions()
-    {
-        if (!base.CheckAdditionalContidions())
-            return false;
-        if (abilityManager.GetAttackColliderStatus())
-            return false;
-        Debug.Log("Collider wylaczony");
-        if (_CheckAdditionalConditions())
-            return true;
-
-
-        return false;
-
-    }
-   
-    protected abstract bool _CheckAdditionalConditions();
-   
-    protected override void SetAbilityValues()
-    {
-        base.SetAbilityValues();
-        _SetAbilityValues();
-    }
-    protected abstract void _SetAbilityValues();
-
-
+    
+   [SerializeField] protected AttackAbility attackAbility = new AttackAbility();
+    
     protected override void Start()
     {
-        base.Start();
-        _Start();
-
+        base.Start();      
+        attackAbility.SetAttackAbilityProperties(abilityManager, transform);
     }
+
     protected override void Awake()
     {
-        base.Awake();
-        playerAbilityProperties.OnAbilityUse = new CustomUnityEvents.FloatUnityEvent();
+        base.Awake();   
     }
-    protected abstract void _Start();
-    protected override void OnSuccessfulUse()
+
+    protected override bool UseAbility()
     {
-        
-        playerAbilityProperties.OnAbilityUse.Invoke(baseCooldownTimes[lvl]);
-        _OnSuccessfulUse();
+        return attackAbility.UseAttackAbility(lvl);
     }
-    protected abstract void _OnSuccessfulUse();
 }

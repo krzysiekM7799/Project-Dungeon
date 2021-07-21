@@ -13,7 +13,7 @@ public class StatsUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerStats = GameController.instance.Player.GetComponent<Stats>();
+        playerStats = GameController.instance.PlayerTransform.GetComponent<Stats>();
         Invoke("SetTextValues", 1);
 
     }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Stats : MonoBehaviour
+public abstract class Stats : MonoBehaviour
 {
     [SerializeField] private int lvl;
     protected int experience;
@@ -19,6 +19,7 @@ public class Stats : MonoBehaviour
     [SerializeField] protected int maxMagicResist;
     protected int criticalDmgChance;
     [SerializeField] protected int maxCriticalDmgChance;
+    [SerializeField] private ParticleSystem bloodParticles;
     
     private float currentPushDistance;
     public int Hp { get => hp; set => hp = value; }
@@ -27,7 +28,7 @@ public class Stats : MonoBehaviour
     public int Armor { get => armor; set => armor = value; }
     public int MagicResist { get => magicResist; set => magicResist = value; }
     public int CriticalDmgChance { get => criticalDmgChance; set => criticalDmgChance = value; }
-
+    public int MaxHp { get => maxHp; }
 
     protected bool died;
     protected Character character;
@@ -38,7 +39,7 @@ public class Stats : MonoBehaviour
 
     protected virtual void Awake()
     {
-        character = GetComponent<Character>();
+     
         var AbilityEffectsCount = Enum.GetNames(typeof(AbilityEffect)).Length;
         AbilityEffectsTimes = new float[AbilityEffectsCount];
         
@@ -64,6 +65,13 @@ public class Stats : MonoBehaviour
         int takenMagicDmg = ClampPositive(magicDmg - MagicResist);
         int takenDmg = takenAttackDmg + takenMagicDmg;
         Hp -= takenDmg;
+       if(bloodParticles != null)
+        {
+            bloodParticles.transform.rotation = UnityEngine.Random.rotation;
+            bloodParticles.Play();
+        }
+        
+            
        // CheckIfDied();
     }
     public bool PushCharacter(Vector3 attackerPosition, float strengh = 1, bool relativeToAttackerPosition = false)
@@ -71,79 +79,7 @@ public class Stats : MonoBehaviour
        return  character.PushCharacter(attackerPosition, strengh, relativeToAttackerPosition);
     }
 
-        protected IEnumerator SetBuffAbilityDuration(StatType statType, float buffAbilityDuration, int buffStatValue)
-    {
-
-
-        switch (statType)
-        {
-
-            case StatType.AttackDmg:
-
-                attackDmg += buffStatValue;
-                yield return new WaitForSeconds(buffAbilityDuration);
-                attackDmg -= buffStatValue;
-                break;
-            case StatType.AbilityPower:
-
-                abilityPower += buffStatValue;
-                yield return new WaitForSeconds(buffAbilityDuration);
-                abilityPower -= buffStatValue;
-                break;
-            case StatType.Armor:
-
-                armor += buffStatValue;
-                yield return new WaitForSeconds(buffAbilityDuration);
-                armor -= buffStatValue;
-
-                break;
-            case StatType.MagicResist:
-
-                magicResist += buffStatValue;
-                yield return new WaitForSeconds(buffAbilityDuration);
-                magicResist -= buffStatValue;
-                break;
-
-
-
-
-        }
-
-
-
-    }
-
-    public void UseBuffAbility(StatType statType, float buffAbilityDuration, int buffStatValue)
-    {
-        
-        switch (statType)
-        {
-            case StatType.Hp:
-                if (hp + buffStatValue < maxHp)
-                {
-                    hp += buffStatValue;
-                }
-                else
-                {
-                    hp = maxHp;
-
-                }
-
-                break;
-            default:
-                StartCoroutine(SetBuffAbilityDuration(statType, buffAbilityDuration, buffStatValue));
-                break;
-            
-
-
-
-
-        }
-
-
-
-    }
- 
+     
     protected void CheckIfDied()
     {
         if (Hp <= 0 && !died)

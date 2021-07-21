@@ -5,61 +5,87 @@ using UnityEngine.AI;
 
 public class EnemyCharacter : Character
 {
-    //Animation properties
+
+    [Header("Movement animation properties")]
     [SerializeField] protected float speedDampTime;
     [SerializeField] protected float angularSpeedDumpTime;
     [SerializeField] protected float angleResponseTime;
-
-    [SerializeField] protected float stopDistance;
+    [Header("Movement properties")]
+    [SerializeField] protected float stoppingDistance;
     [SerializeField] protected float maxSpeed = 1;
-    [SerializeField] protected float angleToTurnWhenMove = 0.6f;
-    private Transform player;
-    private bool cooldownAttack = false;
+    [SerializeField] protected float angleGreaterThanToTurnInPlace = 0.6f;
 
-    public NavMeshAgent agent;
-    
+    //Basic enemy components
+
+    private EnemyStats enemyStats;
+    private EnemyAbilityManager enemyAbilityManager;
+    private NavMeshAgent agent;
+    private Transform playerTransform;
+
+    //Properties related to the pushing method
+
     private Vector3 wherePush;
     private float lastTimePushed;
     private bool isPushed;
 
+    //Properties
 
+    public EnemyStats EnemyStats { get => enemyStats; set => enemyStats = value; }
+    public EnemyAbilityManager EnemyAbilityManager { get => enemyAbilityManager; set => enemyAbilityManager = value; }
+    public NavMeshAgent Agent { get => agent; set => agent = value; }
+    public Transform PlayerTransform { get => playerTransform; set => playerTransform = value; }
 
+    protected override void Awake()
+    {
+        base.Awake();
+        enemyStats = GetComponent<EnemyStats>();
+        enemyAbilityManager = GetComponent<EnemyAbilityManager>();
+        agent = GetComponent<NavMeshAgent>();
+    }
 
+    protected override void Start()
+    {
+        base.Start();
+        playerTransform = GameController.instance.PlayerTransform;
+        agent.updateRotation = false;
 
+    }
 
-    
+    private void LateUpdate()
+    {
+        PushAgentLerp();
+    }
+
     public override void Move(Vector3 where)
     {
         float currentSpeed;
+        //Variable which control when enemy have to rotate in place (play rotate in place animation)
+        float angleGreaterThan = angleGreaterThanToTurnInPlace;
 
-
-        float angleGreaterThan = angleToTurnWhenMove;
         //When is near to point
-        if (Vector3.Distance(transform.position, where) < 2.5f)
+        if (Vector3.Distance(transform.position, where) < stoppingDistance + realRadius)
         {
             currentSpeed = 0f;
             angleGreaterThan = 0.3f;
-            
-            
         }
-        else
+        else //When is far to point
         {
             currentSpeed = maxSpeed;
         }
-        
+
+        //Counting angle to destination point 
         float angle = ThingCalculator.FindAngle(transform.forward, where - transform.position, transform.up, true);
-       
-        
-        //Debug.Log(angle);
+
+
         var animatorSpeed = animator.GetFloat("Speed");
-        
-        if ( Mathf.Abs(angle)  > angleGreaterThan && animatorSpeed < maxSpeed * 0.7f)
+
+        //Turning in place
+        if (Mathf.Abs(angle) > angleGreaterThan && animatorSpeed < maxSpeed * 0.7f)
         {
             animator.SetBool("Turning", true);
             UpdateAnimator(0f, angle);
-            
         }
-        else
+        else //Moving forward with interpolated turning
         {
             animator.SetBool("Turning", false);
             UpdateAnimator(currentSpeed, 0);
@@ -70,26 +96,20 @@ public class EnemyCharacter : Character
                 Quaternion rotation = Quaternion.LookRotation(positionLook);
                 transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 5);
             }
-            
-       
         }
-        
-        
     }
-    public void Turn()
-    {
-
-    }
-
+    //Here is updating basic animator values
     protected void UpdateAnimator(float speed, float angle)
     {
         float angularSpeed = angle / angleResponseTime;
         animator.SetFloat("Speed", speed, speedDampTime, Time.deltaTime);
-        animator.SetFloat("AngularSpeed", angularSpeed, angularSpeedDumpTime, Time.deltaTime );
-        
+        animator.SetFloat("AngularSpeed", angularSpeed, angularSpeedDumpTime, Time.deltaTime);
+
     }
+    //Start pushing method
     protected override bool PerformPushing(Vector3 pushVector)
     {
+
         PushAgent(pushVector);
         return true;
 
@@ -101,16 +121,16 @@ public class EnemyCharacter : Character
 
         isPushed = true;
     }
-
+    //Pushing enemies character is done with the rigidbody velocity field for the duration of the animation being played
     protected void PushAgentLerp()
     {
         if (isPushed && Time.time - lastTimePushed < 0.4f)
         {
 
 
-            float speed = Time.deltaTime * 5;
+            float pushSpeed = Time.deltaTime * 5;
 
-            Vector3 lerp = Vector3.Lerp(wherePush, Vector3.zero, speed);
+            Vector3 lerp = Vector3.Lerp(wherePush, Vector3.zero, pushSpeed);
 
 
 
@@ -125,29 +145,5 @@ public class EnemyCharacter : Character
         }
     }
 
-    protected override void Awake()
-    {
-        base.Awake();
-       
-    }
-    // Start is called before the first frame update
-    protected override void Start()
-    {
-        base.Start();
-        player = GameController.instance.Player;
-        agent = GetComponent<NavMeshAgent>();
-        agent.updateRotation = false;
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        
-        Move(player.position);
-    }
-    private void LateUpdate()
-    {
-        PushAgentLerp(); 
-    }
 
 }

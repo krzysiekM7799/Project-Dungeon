@@ -4,87 +4,79 @@ using UnityEngine;
 
 public abstract class Ability : MonoBehaviour
 {
-    [SerializeField] protected string _name;
+    //Trigger of the Ability
+    [SerializeField] protected string triggerName;
+    //CurrentlLvl of Ability
+    protected int lvl = 0;
+    //Max lvl of Ability
+    [Range(1, 5)]
+    [SerializeField] protected int maxLvl = 3;
+    //Array of cooldowns
+    [SerializeField] protected float[] baseCooldownTimes = new float[1];
 
-    [SerializeField] protected int lvl = 0;
-    [SerializeField] protected float[] baseCooldownTimes = new float[3];
     private bool canBeUse = true;
-    [SerializeField] protected bool canCharacterRotateDuringAbility;
-    
-    protected AbilityType abilityType;
-    
+
     [SerializeField] protected bool animationNeeded = true;
     protected Animator animator;
+
     [SerializeField] protected ParticleSystem particle;
-    [SerializeField] protected ParentOfObject particleParent;
+    [SerializeField] protected bool playParticleOnStart = true;
+    //Basic components
     protected AbilityManager abilityManager;
-    [SerializeField] public PlayerAbilityProperties playerAbilityProperties;
-    protected Character character;
 
     protected virtual void Awake()
     {
-        if(animationNeeded)
-        animator = GetComponentInChildren<Animator>();
-        
+        if (animationNeeded)
+            animator = GetComponentInChildren<Animator>();
+
         abilityManager = GetComponent<AbilityManager>();
-        character = GetComponent<Character>();
-   
     }
-    
+
+    protected virtual void Start()
+    {
+    }
+
     protected abstract bool UseAbility();
+
     public bool TriggeAbility()
     {
-        Debug.Log("wciskam");
         if (canBeUse && !abilityManager.UsingAbility && CheckAdditionalContidions())
         {
-            Debug.Log("probuje1");
             if (UseAbility())
             {
-                
+                BaseUseAbility();
                 abilityManager.StopDetectHit();
                 abilityManager.UsingAbility = true;
                 OnSuccessfulUse();
                 Debug.Log("probuje2");
                 StartCoroutine(SetCoolDown());
                 return true;
-            }        
+            }
         }
         return false;
     }
     protected virtual void BaseUseAbility()
     {
-        SetAbilityValues();
-        if(animator != null)
-            animator.SetTrigger(_name);
-        if (particle != null)
+        if (animator != null)
+            animator.SetTrigger(triggerName);
+        if (particle != null && playParticleOnStart)
         {
             particle.Play();
         }
-            
-        character.RotationEnabled = canCharacterRotateDuringAbility;
     }
 
-    protected virtual bool CheckAdditionalContidions()
-    {
-        return true;
-    }
-    
-    protected virtual void SetAbilityValues()
-    {
+    protected abstract bool CheckAdditionalContidions();
 
-    }
-    protected virtual void OnSuccessfulUse()
-    {
-
-    }
+    protected abstract void OnSuccessfulUse();
 
     private IEnumerator SetCoolDown()
     {
-        Debug.Log("Ustawiam cooldown" + baseCooldownTimes[lvl]);
+        Debug.Log("Ustawiam cooldown" + baseCooldownTimes[ThingCalculator.CheckAbilityLvl(baseCooldownTimes.Length, lvl)]);
         canBeUse = false;
-        yield return new WaitForSeconds(baseCooldownTimes[lvl]);
+        yield return new WaitForSeconds(baseCooldownTimes[ThingCalculator.CheckAbilityLvl(baseCooldownTimes.Length, lvl)]);
         canBeUse = true;
         Debug.Log("zdejmuje cooldown");
 
     }
+
 }

@@ -13,7 +13,7 @@ public class DashBehaviour : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        player = GameController.instance.Player;
+        player = GameController.instance.PlayerTransform;
         if (playerCharacter == null)
         {
             playerCharacter = player.GetComponent<PlayerCharacter>();
