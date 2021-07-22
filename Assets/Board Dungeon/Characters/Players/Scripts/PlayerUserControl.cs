@@ -163,6 +163,11 @@ public class PlayerUserControl : MonoBehaviour
     {
         for (int i = 0; i < abilityButtons.Length; i++)
         {
+            if (Input.GetKeyDown(returnButton(i)))
+            {
+                playerAbilityManager.PerformAbility(i);
+                abilityButtons[i].Pressed = false;
+            }
             if (abilityButtons[i].Pressed)
             {
                 playerAbilityManager.PerformAbility(i);
@@ -170,6 +175,27 @@ public class PlayerUserControl : MonoBehaviour
             }
         }
     }
+
+    KeyCode returnButton(int i)
+    {
+        switch (i)
+        {
+            case 0:
+                return KeyCode.Q;
+                break;
+            case 1:
+                return KeyCode.W;
+                break;
+            case 2:
+                return KeyCode.E;
+                break;
+            case 3:
+                return KeyCode.R;
+                break;
+        }
+        return KeyCode.Q;
+    }
+
     private void HandleAttackButton()
     {
         if (attackButton.Pressed)

@@ -47,4 +47,26 @@ public class ThingCalculator : MonoBehaviour
        
         return false;
     }
+    public static int ClampPositive(int value)
+    {
+        if (value <= 0)
+        {
+            return 0;
+        }
+        else
+        {
+            return value;
+        }
+    }
+    public static float ClampPositive(float value)
+    {
+        if (value <= 0f)
+        {
+            return 0f;
+        }
+        else
+        {
+            return value;
+        }
+    }
 }

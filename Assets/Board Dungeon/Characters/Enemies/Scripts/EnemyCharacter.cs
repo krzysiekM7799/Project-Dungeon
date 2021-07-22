@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class EnemyCharacter : Character
 {
+    //Movement Properties
 
     [Header("Movement animation properties")]
     [SerializeField] protected float speedDampTime;
@@ -76,7 +77,6 @@ public class EnemyCharacter : Character
         //Counting angle to destination point 
         float angle = ThingCalculator.FindAngle(transform.forward, where - transform.position, transform.up, true);
 
-
         var animatorSpeed = animator.GetFloat("Speed");
 
         //Turning in place
@@ -98,6 +98,7 @@ public class EnemyCharacter : Character
             }
         }
     }
+
     //Here is updating basic animator values
     protected void UpdateAnimator(float speed, float angle)
     {
@@ -106,6 +107,7 @@ public class EnemyCharacter : Character
         animator.SetFloat("AngularSpeed", angularSpeed, angularSpeedDumpTime, Time.deltaTime);
 
     }
+
     //Start pushing method
     protected override bool PerformPushing(Vector3 pushVector)
     {
@@ -114,6 +116,7 @@ public class EnemyCharacter : Character
         return true;
 
     }
+
     public void PushAgent(Vector3 wherePush)
     {
         this.wherePush = wherePush;
@@ -121,27 +124,20 @@ public class EnemyCharacter : Character
 
         isPushed = true;
     }
+
     //Pushing enemies character is done with the rigidbody velocity field for the duration of the animation being played
     protected void PushAgentLerp()
     {
         if (isPushed && Time.time - lastTimePushed < 0.4f)
         {
-
-
             float pushSpeed = Time.deltaTime * 5;
-
             Vector3 lerp = Vector3.Lerp(wherePush, Vector3.zero, pushSpeed);
-
-
-
             agent.velocity = lerp;
         }
         else if (isPushed)
         {
-
             isPushed = false;
             agent.velocity = Vector3.zero;
-
         }
     }
 

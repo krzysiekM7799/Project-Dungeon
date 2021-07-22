@@ -47,8 +47,7 @@ public class AttackAbility
         return false;
     }
     public void AttackColliderAnimation()
-    {
-        
+    {     
         if (attackColliderAnimation != null)
             attackColliderAnimation.Play(animationName);
     }

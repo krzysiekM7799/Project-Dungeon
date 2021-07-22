@@ -14,14 +14,12 @@ public abstract class  PlayerAbility : Ability
             return false;
      
         return true;
-
     }
 
     protected override void OnSuccessfulUse()
     {
         playerCharacter.RotationEnabled = canCharacterRotateDuringAbility;
         playerAbilityProperties.OnAbilityUse.Invoke(baseCooldownTimes[lvl]);
-
     }
    
     protected override void Awake()
@@ -29,7 +27,6 @@ public abstract class  PlayerAbility : Ability
         base.Awake();
         playerCharacter = GetComponent<PlayerCharacter>();
         playerAbilityProperties.OnAbilityUse = new CustomUnityEvents.FloatUnityEvent();
-
     }
 
 }

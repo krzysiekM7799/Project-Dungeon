@@ -11,13 +11,24 @@ public abstract class AbilityManager : MonoBehaviour
     //List of Basic Attack scriptable objects
     [SerializeField] protected BasicAttack[] basicAttacks;
 
+    //Count of abilities components
     protected int abilitiesCount;
-    public int AbilitiesCount { get => abilitiesCount; }
+    //Struct which holds information about curreny using ability
     protected CurrentAbilityProperties currentAbilityProperties;
+    
+    //Basic components
+
     protected Stats myStats;
+    
     [SerializeField] private Transform currentTarget;
 
+    //Properties
+
     public bool UsingAbility { get; set; }
+    public int AbilitiesCount { get => abilitiesCount; }
+    public AbilityType CurrentAbilityType { get => currentAbilityProperties.currentAbilityType; set => currentAbilityProperties.currentAbilityType = value; }
+    public CurrentAbilityProperties CurrentAbilityProperties { get => currentAbilityProperties; }
+    public Transform CurrentTarget { get => currentTarget; set => currentTarget = value; }
 
     public BasicAttackProperties CurrentBasicAttacksProperties
     {
@@ -41,6 +52,7 @@ public abstract class AbilityManager : MonoBehaviour
         attackAbilityProperties.abilityEffectTime = currentAbilityProperties.abilityEffectTime;
         return attackAbilityProperties;
     }
+
     public void SetCurrentAttackAbilitysProperties(int attackDmg, float attackDmgMultiplier, int abilityPower, float abilityPowerMultiplier, float strenghOfPush, AbilityEffect abilityEffect, float abilityEffectValue, float abilityEffectTime)
     {
         currentAbilityProperties.currentAbilityType = AbilityType.AttackAbility;
@@ -63,10 +75,6 @@ public abstract class AbilityManager : MonoBehaviour
         return false;
 
     }
-
-    public AbilityType CurrentAbilityType { get => currentAbilityProperties.currentAbilityType; set => currentAbilityProperties.currentAbilityType = value; }
-    public CurrentAbilityProperties CurrentAbilityProperties { get => currentAbilityProperties; }
-    public Transform CurrentTarget { get => currentTarget; set => currentTarget = value; }
 
     protected virtual void Awake()
     {
@@ -135,8 +143,6 @@ public abstract class AbilityManager : MonoBehaviour
                 break;
             case AbilityType.AttackAbility:
                 {
-
-
                     targetStats.TakeDmg(currentAbilityProperties.attackDmg + (int)(myStats.AttackDmg * currentAbilityProperties.attackDmgMultiplier), currentAbilityProperties.abilityPower + (int)(myStats.AbilityPower * currentAbilityProperties.abilityPowerMultiplier));
 
                     if (currentAbilityProperties.strenghOfPush != 0)
@@ -148,7 +154,6 @@ public abstract class AbilityManager : MonoBehaviour
 
                         targetStats.SetAbilityEffect(currentAbilityProperties.abilityEffect, currentAbilityProperties.abilityEffectTime, currentAbilityProperties.abilityEffectValue);
                     }
-
                 }
                 break;
         }
@@ -160,12 +165,10 @@ public abstract class AbilityManager : MonoBehaviour
     {
         switch (attackColliderProperties.parentOfColldier)
         {
-
             case ParentOfObject.CharacterObject:
                 {
                     attackColliders.attackColliderTransform.SetParent(transform);
                     currentAbilityProperties.currentParentOfCollider = ParentOfObject.CharacterObject;
-
                 }
                 break;
             case ParentOfObject.None:

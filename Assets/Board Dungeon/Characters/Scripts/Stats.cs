@@ -19,9 +19,15 @@ public abstract class Stats : MonoBehaviour
     [SerializeField] protected int maxMagicResist;
     protected int criticalDmgChance;
     [SerializeField] protected int maxCriticalDmgChance;
-    [SerializeField] private ParticleSystem bloodParticles;
     
-    private float currentPushDistance;
+    [SerializeField] private ParticleSystem bloodParticles;
+    protected bool died;
+    protected Character character;
+    protected float[] AbilityEffectsTimes;
+    protected float realRadius;
+
+    //Properties
+
     public int Hp { get => hp; set => hp = value; }
     public int AttackDmg { get => attackDmg; set => attackDmg = value; }
     public int AbilityPower { get => abilityPower; set => abilityPower = value; }
@@ -30,12 +36,7 @@ public abstract class Stats : MonoBehaviour
     public int CriticalDmgChance { get => criticalDmgChance; set => criticalDmgChance = value; }
     public int MaxHp { get => maxHp; }
 
-    protected bool died;
-    protected Character character;
-    protected float[] AbilityEffectsTimes;
-    
-
-    protected float realRadius;
+   
 
     protected virtual void Awake()
     {
@@ -56,13 +57,10 @@ public abstract class Stats : MonoBehaviour
         criticalDmgChance = maxCriticalDmgChance;
     }
 
-    // Update is called once per frame
-   
-
     public void TakeDmg(int attackDmg, int magicDmg)
     {
-        int takenAttackDmg = ClampPositive(attackDmg - Armor);
-        int takenMagicDmg = ClampPositive(magicDmg - MagicResist);
+        int takenAttackDmg = ThingCalculator.ClampPositive(attackDmg - Armor);
+        int takenMagicDmg = ThingCalculator.ClampPositive(magicDmg - MagicResist);
         int takenDmg = takenAttackDmg + takenMagicDmg;
         Hp -= takenDmg;
        if(bloodParticles != null)
@@ -70,45 +68,20 @@ public abstract class Stats : MonoBehaviour
             bloodParticles.transform.rotation = UnityEngine.Random.rotation;
             bloodParticles.Play();
         }
-        
-            
-       // CheckIfDied();
     }
+
     public bool PushCharacter(Vector3 attackerPosition, float strengh = 1, bool relativeToAttackerPosition = false)
     {
        return  character.PushCharacter(attackerPosition, strengh, relativeToAttackerPosition);
     }
-
-     
+  
     protected void CheckIfDied()
     {
         if (Hp <= 0 && !died)
         {
             died = true;
-          //  Die();
+          // Die();
             Destroy(gameObject, 5f);
-        }
-    }
-    private int ClampPositive(int value)
-    {
-        if (value <= 0)
-        {
-            return 0;
-        }
-        else
-        {
-            return value;
-        }
-    }
-    private float ClampPositive(float value)
-    {
-        if (value <= 0f)
-        {
-            return 0f;
-        }
-        else
-        {
-            return value;
         }
     }
 
@@ -116,7 +89,7 @@ public abstract class Stats : MonoBehaviour
     {
         for (int i = 0; i < AbilityEffectsTimes.Length; i++)
         {
-            AbilityEffectsTimes[i] = ClampPositive(AbilityEffectsTimes[i] - 1 * Time.deltaTime);
+            AbilityEffectsTimes[i] = ThingCalculator.ClampPositive(AbilityEffectsTimes[i] - 1 * Time.deltaTime);
             if (AbilityEffectsTimes[i] != 0f)
             {
                 PerformAbilityEffect((AbilityEffect)i);
@@ -158,11 +131,6 @@ public abstract class Stats : MonoBehaviour
         {
             AbilityEffectsTimes[(int)abilityEffect] = durationTime;
         }
-        if (value != 0)
-        {
-
-        }
-
     }
 
     protected void FixedUpdate()

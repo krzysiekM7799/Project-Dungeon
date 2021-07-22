@@ -39,42 +39,32 @@ public class BuffAbility
 
                 }
                 yield return 0;
-
                 break;
 
             case StatType.AttackDmg:
-
                 myStats.AttackDmg += currentBuffStatValue;
                 yield return new WaitForSeconds(currentBuffStatDuration);
                 myStats.AttackDmg -= currentBuffStatValue;
                 SetParticleOff();
                 break;
             case StatType.AbilityPower:
-
                 myStats.AbilityPower += currentBuffStatValue;
                 yield return new WaitForSeconds(currentBuffStatDuration);
                 myStats.AbilityPower -= currentBuffStatValue;
                 SetParticleOff();
                 break;
             case StatType.Armor:
-
                 myStats.Armor += currentBuffStatValue;
                 yield return new WaitForSeconds(currentBuffStatDuration);
                 myStats.Armor -= currentBuffStatValue;
                 SetParticleOff();
-
                 break;
             case StatType.MagicResist:
-
                 myStats.MagicResist += currentBuffStatValue;
                 yield return new WaitForSeconds(currentBuffStatDuration);
                 myStats.MagicResist -= currentBuffStatValue;
                 SetParticleOff();
                 break;
-
-
-
-
         }
     }
     public void SetBuffAbilityValues()

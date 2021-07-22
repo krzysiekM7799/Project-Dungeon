@@ -5943,7 +5943,7 @@ MonoBehaviour:
   maxHp: 100
   maxAttackDmg: 0
   maxAbilityPower: 0
-  maxArmor: 0
+  maxArmor: 200
   maxMagicResist: 0
   maxCriticalDmgChance: 0
   bloodParticles: {fileID: 1550478210}
@@ -14740,7 +14740,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1395062318
 RectTransform:
   m_ObjectHideFlags: 0

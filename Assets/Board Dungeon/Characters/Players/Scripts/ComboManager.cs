@@ -12,6 +12,8 @@ public class ComboManager : MonoBehaviour
     private int currentAttackIndex;
     private PlayerCharacter playerCharacter;
     
+    //Properties
+
     public bool CanReceiveInput { get => canReceiveInput; set => canReceiveInput = value; }
     public bool InputReceived { get => inputReceived; set => inputReceived = value; }
     public float StartTime { get => startTime; set => startTime = value; }
@@ -19,7 +21,6 @@ public class ComboManager : MonoBehaviour
     public bool Attacking { get => attacking; set => attacking = value; }
     public int CurrentAttackIndex { get => currentAttackIndex; set => currentAttackIndex = value; }
 
-    // Start is called before the first frame update
     private void Awake()
     {
         playerCharacter = GetComponent<PlayerCharacter>();
@@ -34,11 +35,10 @@ public class ComboManager : MonoBehaviour
         {
             InputReceived = true;
             CanReceiveInput = false;
-
         }
 
     }
-    // Update is called once per frame
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))

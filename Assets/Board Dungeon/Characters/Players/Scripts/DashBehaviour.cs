@@ -19,13 +19,8 @@ public class DashBehaviour : StateMachineBehaviour
             playerCharacter = player.GetComponent<PlayerCharacter>();
             playerUserControl = player.GetComponent<PlayerUserControl>();
             comboManager = player.GetComponent<ComboManager>();
+        }
 
-            Debug.Log("pobieram playera");
-        }
-        else
-        {
-            Debug.Log("nie pobieram playera");
-        }
         comboManager.Attacking = false;
         playerCharacter.RotationEnabled = true;
         var joystickTranslate = playerUserControl.LeftJoystick.Vertical * playerUserControl.CameraForward + playerUserControl.LeftJoystick.Horizontal * playerUserControl.CameraRight;
@@ -38,19 +33,13 @@ public class DashBehaviour : StateMachineBehaviour
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.SetFloat("Speed", 3.6f, 0.02f, Time.deltaTime);
-        
-
-       
-
-
-
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-   override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-   {
+ //  override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+ //  {
         
-    }
+  //  }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
     //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
