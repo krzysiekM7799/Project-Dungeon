@@ -13,7 +13,7 @@ public class EnemyAngleCondition : BTNode
     private float angleToPlayer;
 
 
-    public void SetEnemyAngleConditionProperties(Transform playerTransform, Transform enemyTransform, float playerRadius, float enemyRadius)
+    public void SetEnemyAngleConditionProperties(Transform playerTransform, Transform enemyTransform)
     {
         this.playerTransform = playerTransform;
         this.enemyTransform = enemyTransform;
@@ -21,13 +21,11 @@ public class EnemyAngleCondition : BTNode
 
     private void GetAngleToPlayer()
     {
-        angleToPlayer = ThingCalculator.FindAngle(enemyTransform.forward, playerTransform.position - enemyTransform.position, enemyTransform.up);
-        
+        angleToPlayer = ThingCalculator.FindAngle(enemyTransform.forward, playerTransform.position - enemyTransform.position, enemyTransform.up);     
         angleToPlayer = System.Math.Abs(angleToPlayer);
-        Debug.Log(angleToPlayer);
-        Debug.Log(Vector3.Angle(enemyTransform.forward, playerTransform.position - enemyTransform.position));
-
     }
+    
+    //Main evaluate method, node logic
     public override NodeStates Evaluate()
     {
         GetAngleToPlayer();
@@ -45,7 +43,5 @@ public class EnemyAngleCondition : BTNode
 
         return NodeStates.SUCCESS;
     }
-
-    // Start is called before the first frame update
 
 }

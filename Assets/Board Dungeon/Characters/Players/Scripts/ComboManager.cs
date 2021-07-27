@@ -11,6 +11,8 @@ public class ComboManager : MonoBehaviour
     private bool attacking;
     private int currentAttackIndex;
     private PlayerCharacter playerCharacter;
+
+    public Transform LookAtPointDuringCombo;
     
     //Properties
 

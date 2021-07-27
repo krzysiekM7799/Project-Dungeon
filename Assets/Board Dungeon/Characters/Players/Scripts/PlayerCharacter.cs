@@ -20,10 +20,14 @@ public class PlayerCharacter : Character
     private float forwardAmount;
 
     //Basic player components
+
     private PlayerStats playerStats;
     private PlayerAbilityManager playerAbilityManager;
     private ComboManager comboManager;
     private Rigidbody _rigidbody;
+
+    //Properties
+
     public PlayerStats PlayerStats { get => playerStats; set => playerStats = value; }
     public PlayerAbilityManager PlayerAbilityManager { get => playerAbilityManager; set => playerAbilityManager = value; }
     public ComboManager ComboManager { get => comboManager; set => comboManager = value; }
@@ -49,8 +53,8 @@ public class PlayerCharacter : Character
     //Move player method
     public override void Move(Vector3 move)
     {
-        if (move.magnitude > 1f) move.Normalize(); //zostawia kierunek ustawia dlugosc na jeden
-        move = transform.InverseTransformDirection(move); //zmienia kierunek z globalnego na lokalny
+        if (move.magnitude > 1f) move.Normalize(); //set magnitude to 1
+        move = transform.InverseTransformDirection(move);
         move = Vector3.ProjectOnPlane(move, Vector3.up);
         turnAmount = Mathf.Atan2(move.x, move.z);
         forwardAmount = move.z;
@@ -58,12 +62,7 @@ public class PlayerCharacter : Character
         ApplyRotatation();
         UpdateAnimator(move);
     }
-    //Dash method will be improved
-    public void MakeDash()
-    {
-        animator.SetTrigger("Dash");
-    }
-
+    
     //Method which is helping to rotate player GO
     void ApplyRotatation()
     {
@@ -76,6 +75,7 @@ public class PlayerCharacter : Character
 
     void UpdateAnimator(Vector3 move)
     {
+        //Here is scaling forward amount to be fitted with mecanim
         float forwardAmountScaled = forwardAmount * runAmountScaler;
 
         if (forwardAmountScaled != 0 && forwardAmountScaled < walkAmount)
@@ -102,6 +102,12 @@ public class PlayerCharacter : Character
     protected override bool PerformPushing(Vector3 pushVector)
     {
         return true;
+    }
+
+    //Dash method will be improved
+    public void MakeDash()
+    {
+        animator.SetTrigger("Dash");
     }
 }
 

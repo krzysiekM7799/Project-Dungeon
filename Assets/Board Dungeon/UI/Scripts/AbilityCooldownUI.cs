@@ -12,7 +12,6 @@ public class AbilityCooldownUI : MonoBehaviour
 
     public void PerformUICooldown(float cooldown)
     {
-        Debug.Log("STATRTUJEEEEEEEE");
         StartCoroutine(Countdown(cooldown));
     }
     

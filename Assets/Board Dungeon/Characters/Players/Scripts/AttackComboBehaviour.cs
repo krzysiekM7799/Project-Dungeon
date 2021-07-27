@@ -9,8 +9,7 @@ public class AttackComboBehaviour : StateMachineBehaviour
     private Transform player;
     private PlayerCharacter playerCharacter;
     private ComboManager comboManager;
-    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-
+   
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.SetBool("Attack", false);
@@ -60,7 +59,7 @@ public class AttackComboBehaviour : StateMachineBehaviour
     {
         comboManager.TransitionEnded = true;
         comboManager.StartTime = Time.time;
-        comboManager.Attacking = false;
+        
         
     }
     private void RotateToTarget()

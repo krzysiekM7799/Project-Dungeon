@@ -1,10 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+//Class responsible for character statistics
 public abstract class Stats : MonoBehaviour
 {
+    //Stats
     [SerializeField] private int lvl;
     protected int experience;
     protected int hp;
@@ -19,22 +19,28 @@ public abstract class Stats : MonoBehaviour
     [SerializeField] protected int maxMagicResist;
     protected int criticalDmgChance;
     [SerializeField] protected int maxCriticalDmgChance;
-    
+
+    //Blood particles, it plays when character take dmg
     [SerializeField] private ParticleSystem bloodParticles;
-    protected bool died;
-    protected Character character;
+    //Array which holds effects time left
     protected float[] AbilityEffectsTimes;
-    protected float realRadius;
+    //If enemy is dead
+    protected bool died;
+    
+    //Basic componentes
+
+    protected Character character;
+ 
 
     //Properties
 
-    public int Hp { get => hp; set => hp = value; }
-    public int AttackDmg { get => attackDmg; set => attackDmg = value; }
-    public int AbilityPower { get => abilityPower; set => abilityPower = value; }
-    public int Armor { get => armor; set => armor = value; }
-    public int MagicResist { get => magicResist; set => magicResist = value; }
-    public int CriticalDmgChance { get => criticalDmgChance; set => criticalDmgChance = value; }
-    public int MaxHp { get => maxHp; }
+    public virtual int Hp { get => hp; set => hp = value; }
+    public virtual int AttackDmg { get => attackDmg; set => attackDmg = value; }
+    public virtual int AbilityPower { get => abilityPower; set => abilityPower = value; }
+    public virtual int Armor { get => armor; set => armor = value; }
+    public virtual int MagicResist { get => magicResist; set => magicResist = value; }
+    public virtual int CriticalDmgChance { get => criticalDmgChance; set => criticalDmgChance = value; }
+    public virtual int MaxHp { get => maxHp; }
 
    
 
@@ -43,21 +49,20 @@ public abstract class Stats : MonoBehaviour
      
         var AbilityEffectsCount = Enum.GetNames(typeof(AbilityEffect)).Length;
         AbilityEffectsTimes = new float[AbilityEffectsCount];
-        
-    }
-    // Start is called before the first frame update
-    protected virtual void Start()
-    {
-        realRadius = character.GetRealRadiusRadius();
-        hp = maxHp;
-        attackDmg = maxAttackDmg;
-        abilityPower = maxAbilityPower;
-        armor = maxArmor;
-        magicResist = maxMagicResist;
-        criticalDmgChance = maxCriticalDmgChance;
     }
 
-    public void TakeDmg(int attackDmg, int magicDmg)
+    protected virtual void Start()
+    {
+        Hp = maxHp;
+        AttackDmg = maxAttackDmg;
+        AbilityPower = maxAbilityPower;
+        Armor = maxArmor;
+        MagicResist = maxMagicResist;
+        CriticalDmgChance = maxCriticalDmgChance;
+    }
+
+    //Main take dmg method
+    public virtual void TakeDmg(int attackDmg, int magicDmg)
     {
         int takenAttackDmg = ThingCalculator.ClampPositive(attackDmg - Armor);
         int takenMagicDmg = ThingCalculator.ClampPositive(magicDmg - MagicResist);
@@ -70,6 +75,7 @@ public abstract class Stats : MonoBehaviour
         }
     }
 
+    //Trigge push character
     public bool PushCharacter(Vector3 attackerPosition, float strengh = 1, bool relativeToAttackerPosition = false)
     {
        return  character.PushCharacter(attackerPosition, strengh, relativeToAttackerPosition);
@@ -80,11 +86,11 @@ public abstract class Stats : MonoBehaviour
         if (Hp <= 0 && !died)
         {
             died = true;
-          // Die();
             Destroy(gameObject, 5f);
         }
     }
 
+    //Check if if any abilit effect is active on character
     private void CheckAbilityEffects()
     {
         for (int i = 0; i < AbilityEffectsTimes.Length; i++)
@@ -97,33 +103,35 @@ public abstract class Stats : MonoBehaviour
         }
     }
 
+    //A method waiting for the logic of individual effects to be added
     private void PerformAbilityEffect(AbilityEffect abilityEffect)
     {
         switch (abilityEffect)
         {
             case AbilityEffect.Stun:
                 {
-                    Debug.Log("Odtwarzam Stuna");
+                    Debug.Log("Stun");
                 }
                 break;
             case AbilityEffect.Slow:
                 {
-                    Debug.Log("Odtwarzam Slowa");
+                    Debug.Log("Slow");
                 }
                 break;
             case AbilityEffect.Poison:
                 {
-                    Debug.Log("Odtwarzam Posisona");
+                    Debug.Log("Poison");
                 }
                 break;
             case AbilityEffect.Blind:
                 {
-                    Debug.Log("Odtwarzam Blinda");
+                    Debug.Log("Blind");
                     break;
                 }
         }
     }
 
+    //Metoda to sets up ability effect by attacker
     public void SetAbilityEffect(AbilityEffect abilityEffect, float durationTime, float value = 0)
     {
 

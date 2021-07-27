@@ -7,10 +7,8 @@ public abstract class AbilityManager : MonoBehaviour
 {
     // Structure, which hold transform of object with colliders, colliders, and information which collider is current using
     [SerializeField] AttackColliders attackColliders;
-
     //List of Basic Attack scriptable objects
     [SerializeField] protected BasicAttack[] basicAttacks;
-
     //Count of abilities components
     protected int abilitiesCount;
     //Struct which holds information about curreny using ability
@@ -19,7 +17,8 @@ public abstract class AbilityManager : MonoBehaviour
     //Basic components
 
     protected Stats myStats;
-    
+
+    //Current target of abilities
     [SerializeField] private Transform currentTarget;
 
     //Properties
@@ -30,6 +29,12 @@ public abstract class AbilityManager : MonoBehaviour
     public CurrentAbilityProperties CurrentAbilityProperties { get => currentAbilityProperties; }
     public Transform CurrentTarget { get => currentTarget; set => currentTarget = value; }
 
+    protected virtual void Awake()
+    {       
+    }
+    protected virtual void Start()
+    {      
+    }
     public BasicAttackProperties CurrentBasicAttacksProperties
     {
         get
@@ -76,14 +81,6 @@ public abstract class AbilityManager : MonoBehaviour
 
     }
 
-    protected virtual void Awake()
-    {
-    }
-
-    protected virtual void Start()
-    {
-    }
-
     //Methods for enable or disable attack collider for animation events (non target attack abilities)
     public void StartDetectHit()
     {
@@ -115,12 +112,14 @@ public abstract class AbilityManager : MonoBehaviour
                 break;
         }
     }
-
+    
+    //Method for animation event autotarget ability
     public void AutoTargetHit()
     {
         MarkAHit(currentTarget.GetComponent<Stats>());
     }
 
+    //Let to know now its basic attack playing
     public void MarkBasicAttack(int index)
     {
         currentAbilityProperties.currentAbilityIndex = index;
@@ -128,6 +127,7 @@ public abstract class AbilityManager : MonoBehaviour
         SetAttackColliderProperties(basicAttacks[index]._attackColliderProperties);
     }
 
+    //Method with logic marking hit on target
     public void MarkAHit(Stats targetStats)
     {
         switch (CurrentAbilityProperties.currentAbilityType)
@@ -159,8 +159,10 @@ public abstract class AbilityManager : MonoBehaviour
         }
     }
 
+    //ADepending on whether the character is an enemy or a player, the method uses a ability
     public abstract void PerformAbility(int index);
 
+    //Abilities set thier attack collider properties by this method
     public void SetAttackColliderProperties(AttackColliderProperties attackColliderProperties)
     {
         switch (attackColliderProperties.parentOfColldier)

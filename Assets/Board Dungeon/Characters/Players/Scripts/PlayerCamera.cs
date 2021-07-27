@@ -9,42 +9,33 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField] float camY = 2.56f;
     [SerializeField] float camZ;
     [SerializeField] float camHeightLookPosition = 1.31f;
-    Transform currentCamTarget;
-    float cameraAngle;
+    [SerializeField] private float camHeightLookPositionOnEnemy = 2;
     [SerializeField] float cameraAngleSpeed = 0.17f;
     [SerializeField] float camLookAtSpeed = 12f;
     [SerializeField] float camFollowSpeed = 5f;
-    bool isCamLocked = false;
-    Transform player;
-    Camera MainCamera;
-    ComboManager comboManager;
-    
+    private float cameraAngle;
+    private Transform playerTransform;
+    private Camera mainCamera;
+    private ComboManager comboManager;
     PlayerUserControl playerUserControl;
-    // Start is called before the first frame update
+    
     void Awake()
     {
         playerUserControl = FindObjectOfType<PlayerUserControl>();
-        player = playerUserControl.transform;
-        comboManager = player.GetComponent<ComboManager>();
-        MainCamera = Camera.main;
-        
-
+        playerTransform = playerUserControl.transform;
+        comboManager = playerTransform.GetComponent<ComboManager>();
+        mainCamera = Camera.main;
     }
-
-
 
     void FreeCamera()
     {
-        
+      
         if (comboManager.Attacking)
         {
-
-            var playerAngle = Vector3.Angle(Vector3.forward, player.forward);
-            Vector3 normal = Vector3.Cross(Vector3.forward, player.forward);// zwraca wektor miedzy dwoma wektorami
+            var playerAngle = Vector3.Angle(Vector3.forward, playerTransform.forward);
+            Vector3 normal = Vector3.Cross(Vector3.forward, playerTransform.forward);
             playerAngle *= Mathf.Sign(Vector3.Dot(normal, Vector3.up));
-
-            
-
+    
             cameraAngle = 180f;
             cameraAngle += playerAngle;
             //added angle to view combo
@@ -55,18 +46,34 @@ public class PlayerCamera : MonoBehaviour
             cameraAngle += playerUserControl.TouchField.TouchDist.x * cameraAngleSpeed;
             
         }
-            cameraHolder.position = player.position + Quaternion.AngleAxis(cameraAngle, Vector3.up) * new Vector3(0, camY, camX);
+            cameraHolder.position = playerTransform.position + Quaternion.AngleAxis(cameraAngle, Vector3.up) * new Vector3(0, camY, camX);
             Vector3 targetPoint = camZ * cameraHolder.right;
             cameraHolder.position += targetPoint;
-            cameraHolder.LookAt(player.position + new Vector3(0, camHeightLookPosition, 0) + targetPoint);
+            cameraHolder.LookAt(playerTransform.position + new Vector3(0, camHeightLookPosition, 0) + targetPoint);
         
 
-        Vector3 smoothedPosition = Vector3.Slerp(MainCamera.transform.position, cameraHolder.position, Time.deltaTime * camFollowSpeed);
-        MainCamera.transform.position = smoothedPosition;
-        Vector3  camLookAtPoint = player.position + new Vector3(0, camHeightLookPosition, 0) + targetPoint;
-        MainCamera.transform.rotation = Quaternion.Lerp(MainCamera.transform.rotation, Quaternion.LookRotation(camLookAtPoint - MainCamera.transform.position), camLookAtSpeed * Time.deltaTime);
-
+        Vector3 smoothedPosition = Vector3.Slerp(mainCamera.transform.position, cameraHolder.position, Time.deltaTime * camFollowSpeed);
+        mainCamera.transform.position = smoothedPosition;
         
+        Vector3 camLookAtPoint;
+        float camLookAtSpeed2;
+        if (comboManager.Attacking && comboManager.LookAtPointDuringCombo != null)
+        {
+            camLookAtPoint = playerTransform.position + targetPoint + new Vector3(0, camHeightLookPosition, 0);
+            if(comboManager.LookAtPointDuringCombo.position.y >= 0.5f && comboManager.LookAtPointDuringCombo.position.y <= 2.5f)
+            camLookAtPoint.y = comboManager.LookAtPointDuringCombo.position.y;
+
+            camLookAtSpeed2 = 3.5f;
+           
+        }
+        else
+        {
+           camLookAtPoint = playerTransform.position + new Vector3(0, camHeightLookPosition, 0) + targetPoint;
+            camLookAtSpeed2 = camLookAtSpeed;
+
+        }
+        mainCamera.transform.rotation = Quaternion.Lerp(mainCamera.transform.rotation, Quaternion.LookRotation(camLookAtPoint - mainCamera.transform.position), camLookAtSpeed2 * Time.deltaTime);
+
     }
 
     // Update is called once per frame

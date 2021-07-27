@@ -18,6 +18,7 @@ public class IdleBehaviour : StateMachineBehaviour
         animator.SetBool("Attack", false);
         comboManager.InputReceived = false;
         comboManager.CanReceiveInput = true;
+        comboManager.Attacking = false;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

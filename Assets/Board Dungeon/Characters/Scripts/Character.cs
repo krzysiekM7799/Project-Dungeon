@@ -54,7 +54,6 @@ public abstract class Character : MonoBehaviour
                 var nearestColliderPointToAttacker = transform.position - pushVector * realRadius;
                 strengh -= Vector3.Distance(nearestColliderPointToAttacker, attackerPosition);
             }
-            Debug.Log(strengh);
             animator.SetTrigger("Hit");
             pushVector *= strengh;
             return PerformPushing(pushVector);

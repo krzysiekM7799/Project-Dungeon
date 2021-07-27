@@ -4,17 +4,15 @@ using UnityEngine;
 
 public class EnemyStats : Stats
 {
+    //Basic components
+
+    [SerializeField] private EnemyHpUI enemyHpUI;
     private EnemyCharacter enemyCharacter;
     
+    //Properties
 
+    public override int Hp { get => base.Hp; set { hp = value; enemyHpUI.SetHpValueToEnemyUI(Hp, MaxHp); } }
 
-    // Start is called before the first frame update
-    protected override void Start()
-    {
-        base.Start();
-        
-        
-    }
     protected override void Awake()
     {
         base.Awake();
@@ -22,13 +20,9 @@ public class EnemyStats : Stats
         character = enemyCharacter;
     }
 
-    
-
- 
-    private void Update()
+    protected override void Start()
     {
-        
+        base.Start();     
     }
-    // Update is called once per frame
 
 }

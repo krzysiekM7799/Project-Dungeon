@@ -1,12 +1,18 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerBuffAbility : PlayerAbility
 {
     [SerializeField] protected BuffAbility buffAbility = new BuffAbility();
+    
+    //Basic components
+
     private PlayerStats myStats;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        myStats = GetComponent<PlayerStats>();
+    }
 
     protected override void Start()
     {
@@ -14,11 +20,6 @@ public class PlayerBuffAbility : PlayerAbility
         buffAbility.SetBuffAbilityProperties(myStats, abilityManager, particle);
     }
 
-    protected override void Awake()
-    {
-        base.Awake();
-        myStats = GetComponent<PlayerStats>();       
-    }
     protected override bool UseAbility()
     {
         StartCoroutine(buffAbility.UseBuffAbility(lvl));

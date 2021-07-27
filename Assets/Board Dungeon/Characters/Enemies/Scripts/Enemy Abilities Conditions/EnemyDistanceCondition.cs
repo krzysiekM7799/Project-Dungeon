@@ -12,20 +12,21 @@ public class EnemyDistanceCondition : BTNode
     private float distanceToPlayer;
     private float sumOfTheCharacterRadius;
     
-
     public void SetEnemyDistanceConditionProperties(Transform playerTransform, Transform enemyTransform, float playerRadius, float enemyRadius)
     {
         this.playerTransform = playerTransform;
         this.enemyTransform = enemyTransform;
-        sumOfTheCharacterRadius = playerRadius + enemyRadius;
-        
+        sumOfTheCharacterRadius = playerRadius + enemyRadius;       
     }
 
     private void GetDistanceToPlayer()
     {
         distanceToPlayer = Vector3.Distance(playerTransform.position, enemyTransform.position);
+        //distance between capsule colliders, not middle of character
         distanceToPlayer -= sumOfTheCharacterRadius;
     }
+
+    //Main evaluate method, logic of node
     public override NodeStates Evaluate()
     {
         GetDistanceToPlayer();
@@ -43,7 +44,5 @@ public class EnemyDistanceCondition : BTNode
 
         return NodeStates.SUCCESS;
     }
-
-    // Start is called before the first frame update
-   
+ 
 }

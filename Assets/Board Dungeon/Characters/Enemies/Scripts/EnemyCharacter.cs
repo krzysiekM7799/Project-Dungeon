@@ -47,9 +47,7 @@ public class EnemyCharacter : Character
     protected override void Start()
     {
         base.Start();
-        playerTransform = GameController.instance.PlayerTransform;
         agent.updateRotation = false;
-
     }
 
     private void LateUpdate()
@@ -111,10 +109,8 @@ public class EnemyCharacter : Character
     //Start pushing method
     protected override bool PerformPushing(Vector3 pushVector)
     {
-
         PushAgent(pushVector);
         return true;
-
     }
 
     public void PushAgent(Vector3 wherePush)

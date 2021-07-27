@@ -23,23 +23,28 @@ public class DashBehaviour : StateMachineBehaviour
 
         comboManager.Attacking = false;
         playerCharacter.RotationEnabled = true;
+        RotateToJoystick();
+
+    }
+
+    private void RotateToJoystick()
+    {
         var joystickTranslate = playerUserControl.LeftJoystick.Vertical * playerUserControl.CameraForward + playerUserControl.LeftJoystick.Horizontal * playerUserControl.CameraRight;
         var angleBeetwenAnalogAndPlayer = ThingCalculator.FindAngle(player.forward, joystickTranslate, player.up);
         player.transform.Rotate(0, angleBeetwenAnalogAndPlayer, 0);
-        
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        animator.SetFloat("Speed", 3.6f, 0.02f, Time.deltaTime);
-    }
+    // override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //  {
+    //    
+    // }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
- //  override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
- //  {
-        
-  //  }
+    //  override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //  {
+
+    //  }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
     //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

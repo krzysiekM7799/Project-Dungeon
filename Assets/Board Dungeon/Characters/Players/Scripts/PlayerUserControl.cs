@@ -38,11 +38,6 @@ public class PlayerUserControl : MonoBehaviour
     }
     void Start()
     {
-        /* Szablon dla przyciskow skilli
-         * var leftJoystickGO = Instantiate(Resources.Load<GameObject>(resourcesDirLeftJoystick + currentJoystickName));
-          leftJoystickGO.transform.SetParent(uiCanvas,false);
-          leftJoystick = leftJoystickGO.GetComponent<FixedJoystick>();*/
-
         leftJoystick = FindObjectOfType<FixedJoystick>();
         touchField = FindObjectOfType<FixedTouchField>();
         attackButton = FindObjectOfType<FixedButton>();
@@ -111,10 +106,6 @@ public class PlayerUserControl : MonoBehaviour
         }
     }
 
-
-
-
-
     private void SetAbilitiesButtons()
     {
         var buttonSkill = Resources.Load<GameObject>(resourcesDirAbilitiesButtons + abilityButtonName);
@@ -126,7 +117,6 @@ public class PlayerUserControl : MonoBehaviour
             currentButtonSkill.transform.SetParent(attackButton.transform, false);
             abilityButtons[i] = currentButtonSkill.GetComponent<FixedButton>();
             abilityButtons[i].GetComponent<RectTransform>().localPosition = abilityButtonLayouts[playerAbilityManager.AbilitiesCount - 1][i];
-            // currentButtonSkill.GetComponent<Image>().sprite = abilityManager.GetImgOfAbility(i);
             if (i == 0)
             {
                 var dashButton2 = Instantiate(buttonSkill);
@@ -136,9 +126,6 @@ public class PlayerUserControl : MonoBehaviour
             }
 
         }
-
-
-
     }
 
 
@@ -148,14 +135,10 @@ public class PlayerUserControl : MonoBehaviour
         {
             var abilityUI = abilityButtons[i].transform.GetComponent<AbilityCooldownUI>();
 
-            //abilityManager.GetAbilitiesEvent(i).AddListener(Ping);
-
-
             abilityUI.AbilityImageSprite = playerAbilityManager.PlayerAbilities[i].playerAbilityProperties.Image;
 
             playerAbilityManager.PlayerAbilities[i].playerAbilityProperties.OnAbilityUse.AddListener(abilityUI.PerformUICooldown);
-            // Debug.Log(abilityManager.abilities[i].playerAbilityProperties.OnAbilityUse);
-            // abilityManager.GetImgOfAbility(i);
+
 
         }
     }
@@ -176,22 +159,19 @@ public class PlayerUserControl : MonoBehaviour
         }
     }
 
-    KeyCode returnButton(int i)
+    //Just for prototype
+    private KeyCode returnButton(int i)
     {
         switch (i)
         {
             case 0:
                 return KeyCode.Q;
-                break;
             case 1:
                 return KeyCode.W;
-                break;
             case 2:
                 return KeyCode.E;
-                break;
             case 3:
                 return KeyCode.R;
-                break;
         }
         return KeyCode.Q;
     }
@@ -216,17 +196,8 @@ public class PlayerUserControl : MonoBehaviour
         var vInput = leftJoystick.Vertical;
         var hInput = leftJoystick.Horizontal;
 
-
-        /* m_CamForward = Vector3.Scale(m_Cam.forward, new Vector3(1, 0, 1)).normalized;
-         //ZAMIENIC NA Vinput Hinput
-         m_Move = vInput * m_CamForward + hInput * m_Cam.right;*/
-
-        //ZAMIENIC NA Vinput Hinput
         Vector3 move = vInput * cameraForward + hInput * cameraRight;
-
-        //    Vector3  move = vInput * Vector3.forward + hInput * Vector3.right;
         playerCharacter.Move(move);
-
 
         if (Input.GetKeyDown(KeyCode.LeftShift) || dashButton.Pressed)
         {
@@ -237,8 +208,6 @@ public class PlayerUserControl : MonoBehaviour
         }
 
         HandleButtons();
-
-
 
     }
 }

@@ -30,6 +30,5 @@ public enum StatType
     Armor,
     MagicResist,
     CriticalDmgChance,
-    SmashingDmgChance,
 }
 

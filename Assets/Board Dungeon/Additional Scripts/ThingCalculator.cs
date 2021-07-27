@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Additional class
 public class ThingCalculator : MonoBehaviour
 {
+    //Method for finding an angle with a side specification
     public static float FindAngle(Vector3 fromVector, Vector3 toVector, Vector3 upVector, bool radians = false)
     {
         //If toVector is 0 just return 0 to avoid errors
@@ -28,6 +30,8 @@ public class ThingCalculator : MonoBehaviour
 
         return angle;
     }
+
+    //Abilities do not have to have specific values for each level of abilities, if there are fewer of them, and the level of abilities is higher, then the highest value is returned
     public static int CheckAbilityLvl(int length, int abilityLvl)
     {
         if (length - 1 < abilityLvl)
@@ -37,6 +41,8 @@ public class ThingCalculator : MonoBehaviour
 
         return abilityLvl;
     }
+
+    //Just randomize chance of doing something
     public static bool TryWithPercentChance(int percentChance)
     {
         var random = Random.Range(0, 101);
@@ -47,6 +53,7 @@ public class ThingCalculator : MonoBehaviour
        
         return false;
     }
+
     public static int ClampPositive(int value)
     {
         if (value <= 0)
@@ -58,6 +65,7 @@ public class ThingCalculator : MonoBehaviour
             return value;
         }
     }
+
     public static float ClampPositive(float value)
     {
         if (value <= 0f)

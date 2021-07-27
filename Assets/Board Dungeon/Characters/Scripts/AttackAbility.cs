@@ -3,19 +3,27 @@ using UnityEngine;
 [System.Serializable]
 public class AttackAbility
 {
+    //Properties of attack ability
     [SerializeField] protected int[] attackDmg = new int[1];
     [SerializeField] protected float attackDmgMultiplier;
     [SerializeField] protected int[] abilityPower = new int[1];
     [SerializeField] protected float abilityPowerMultiplier;
+    //If ability is autotarget and dont use attack collider, just distance to target
     [SerializeField] protected bool isAutoTarget;
     [SerializeField] protected float minDistanceToUse;
+    //Effect and its properties which applies a ability to the target
     [SerializeField] protected AbilityEffect abilityEffect = AbilityEffect.None;
     [SerializeField] protected float[] abilityEffectValue = new float[1];
     [SerializeField] protected float[] abilityEffectTime = new float[1];
     [SerializeField] protected float[] strenghOfPush = new float[1];
+    //Structure which holds attack collider properties
     [SerializeField] protected AttackColliderProperties attackColliderProperties;
+    //Animation of attack collider which will be played after using ability
     [SerializeField] protected Animation attackColliderAnimation;
     [SerializeField] protected string animationName;
+    
+    //Basic components
+
     private AbilityManager abilityManager;
     private Transform transform;
 
@@ -28,19 +36,22 @@ public class AttackAbility
 
     public bool UseAttackAbility(int abilityLvl)
     {
+        //If is not AutoTarget
         if (!isAutoTarget)
         {
             SetAttackAbilityValues(abilityLvl);
-            Debug.Log("jestem");
             AttackColliderAnimation();
             return true;
-        }
+        }//If is AutoTarget
         else if (minDistanceToUse >= Vector3.Distance(abilityManager.CurrentTarget.position, transform.position))
         {
             SetAttackAbilityValues(abilityLvl);
+            
+            //Rotate to target
             var lookDirection = abilityManager.CurrentTarget.position;
             lookDirection.y = transform.position.y;
             transform.LookAt(lookDirection);
+
             AttackColliderAnimation();
             return true;
         }
@@ -52,6 +63,7 @@ public class AttackAbility
             attackColliderAnimation.Play(animationName);
     }
 
+    //Sets up values to abilityManager where is manage hit detection
     public  void SetAttackAbilityValues(int abilityLvl)
     {
         abilityManager.SetCurrentAttackAbilitysProperties(attackDmg[ThingCalculator.CheckAbilityLvl(attackDmg.Length, abilityLvl)],

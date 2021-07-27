@@ -13,16 +13,18 @@ public abstract class Ability : MonoBehaviour
     [SerializeField] protected int maxLvl = 3;
     //Array of cooldowns
     [SerializeField] protected float[] baseCooldownTimes = new float[1];
-
+    //Cooldown boolean
     private bool canBeUse = true;
-
+    //If ability has animation
     [SerializeField] protected bool animationNeeded = true;
-    protected Animator animator;
-
+    //If ability has particles
     [SerializeField] protected ParticleSystem particle;
     [SerializeField] protected bool playParticleOnStart = true;
+    
     //Basic components
+
     protected AbilityManager abilityManager;
+    protected Animator animator;
 
     protected virtual void Awake()
     {
@@ -36,8 +38,7 @@ public abstract class Ability : MonoBehaviour
     {
     }
 
-    protected abstract bool UseAbility();
-
+    //Method that invokes the ability
     public bool TriggeAbility()
     {
         if (canBeUse && !abilityManager.UsingAbility && CheckAdditionalContidions())
@@ -45,38 +46,42 @@ public abstract class Ability : MonoBehaviour
             if (UseAbility())
             {
                 BaseUseAbility();
+                //Make sure attack collider is disabled
                 abilityManager.StopDetectHit();
+                //Indicating that the character is using a ability
                 abilityManager.UsingAbility = true;
                 OnSuccessfulUse();
-                Debug.Log("probuje2");
                 StartCoroutine(SetCoolDown());
                 return true;
             }
         }
         return false;
     }
+
+    //Method to override, here the logic of the ability is called
+    protected abstract bool UseAbility();
+
     protected virtual void BaseUseAbility()
     {
         if (animator != null)
             animator.SetTrigger(triggerName);
+        
         if (particle != null && playParticleOnStart)
-        {
             particle.Play();
-        }
     }
 
+    //Method in which individual ability conditions will be checked before use ability
     protected abstract bool CheckAdditionalContidions();
-
+  
+    //A method whereby actions can be triggered after using a ability successfully
     protected abstract void OnSuccessfulUse();
 
+    //Cooldown counter
     private IEnumerator SetCoolDown()
     {
-        Debug.Log("Ustawiam cooldown" + baseCooldownTimes[ThingCalculator.CheckAbilityLvl(baseCooldownTimes.Length, lvl)]);
         canBeUse = false;
         yield return new WaitForSeconds(baseCooldownTimes[ThingCalculator.CheckAbilityLvl(baseCooldownTimes.Length, lvl)]);
         canBeUse = true;
-        Debug.Log("zdejmuje cooldown");
-
     }
 
 }

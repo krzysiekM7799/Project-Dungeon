@@ -4,12 +4,32 @@ using UnityEngine;
 
 public abstract class EnemyAbility : Ability
 {
-    protected EnemyCharacter enemyCharacter;
+    //The class withstood the available conditions that must be met for the enemy to use the ability
     [SerializeField] private EnemyAbilityConditions enemyAbilityConditions = new EnemyAbilityConditions();
+    //Sequence that checks conditions in order
     private Sequence enemyAbilityConditionsSequence;
+    //In the enemycharacter there are references to most of the enemy's needed components
+    protected EnemyCharacter enemyCharacter;
+ 
+    protected override void Awake()
+    {
+        base.Awake();
+        enemyCharacter = GetComponent<EnemyCharacter>();
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+        //Sets up the necessary components to enemyAbilityConditions class
+        enemyAbilityConditions.SetEnemyAbilityConditionsProperties(enemyCharacter);
+        //Making sequence of conditions
+        enemyAbilityConditionsSequence = enemyAbilityConditions.MakeEnemyAbilityConditionsNode();
+    }
+
     protected override bool CheckAdditionalContidions()
     {
-        if(enemyAbilityConditionsSequence.Evaluate() == NodeStates.FAILURE)
+        //Sequence call, if any of the conditions is not met, it returns false
+        if (enemyAbilityConditionsSequence.Evaluate() == NodeStates.FAILURE)
         {
             return false;
         }
@@ -18,28 +38,16 @@ public abstract class EnemyAbility : Ability
 
     protected override void OnSuccessfulUse()
     {
-       
+        
     }
 
-    protected override void Awake()
-    {
-        base.Awake();
-        enemyCharacter = GetComponent<EnemyCharacter>();
-    }
-    protected override void Start()
-    {
-        base.Start();
-        enemyAbilityConditions.SetEnemyAbilityConditionsProperties(enemyCharacter);
-        enemyAbilityConditionsSequence = enemyAbilityConditions.MakeEnemyAbilityConditionsNode();
-    }
+    //Method needed for the main enemy's behavior tree to determine if it has been successfully used
     public virtual NodeStates UseAbilityForNode()
     {
-
         if(TriggeAbility())
         return NodeStates.SUCCESS;
 
         return NodeStates.FAILURE;
     }
-   
 
 }
